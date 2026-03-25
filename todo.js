@@ -85,6 +85,32 @@ function viewTaskList() {
   }
 }
 
+// タスク更新処理.
+function updateTask(id) {
+  // データ取得.
+  const taskList = getData();
+  // 対象を初期化.
+  let target = null;
+  // 対象のタスクを更新、取得.
+  for(let task of taskList) {
+    if(task.id === id) {
+      if(task.completed) throw new Error('指定のタスクはすでに完了になっています.');
+      task.completed = true;
+      target = task;
+      break;
+    }
+  }
+  // 対象の存在チェック.
+  if(target) {
+    // 存在する場合、データを保存.
+    saveData(taskList);
+    return target;
+  } else {
+    // 存在しない場合、エラーを投げる.
+    throw new Error('指定のIDに該当するタスクが存在しません.');
+  }
+}
+
 
 // データ取得処理.
 function getData() {
@@ -183,7 +209,7 @@ program
       // 追加完了メッセージを chalk の緑色で表示する.
       console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
     } catch (err) {
-      console.error(err.message);
+      console.error(chalk.red(err.message));
     }
   });
 
@@ -195,7 +221,22 @@ program
       // タスク表示処理.
       viewTaskList();
     } catch (err) {
-      console.error(err.message);
+      console.error(chalk.red(err.message));
+    }
+  });
+
+// done コマンド.
+program
+  .command('done')
+  .argument('<id>', 'String argument')
+  .action((id) => {
+    try {
+      // タスク更新処理.
+       const target = updateTask(id);
+      // 追加完了メッセージを chalk の緑色で表示する.
+      console.log(chalk.green(`タスクを完了にしました. ID: ${target.id}, タイトル: ${target.title}`));
+    } catch (err) {
+      console.error(chalk.red(err.message));
     }
   });
 
