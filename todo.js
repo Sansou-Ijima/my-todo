@@ -111,6 +111,23 @@ function updateTask(id) {
   }
 }
 
+// タスク削除処理.
+function deleteTask(id) {
+  // データ取得.
+  const taskList = getData();
+  // 対象のインデックスを取得.
+  let index = taskList.findIndex(task => task.id === id);
+  // 対象の存在チェック.
+  if(index >= 0) {
+    // 存在する場合、一覧からデータを削除.
+    const target = taskList.splice(index, 1).shift();
+    saveData(taskList);
+    return target;
+  } else {
+    // 存在しない場合、エラーを投げる.
+    throw new Error('指定のIDに該当するタスクが存在しません.');
+  }
+}
 
 // データ取得処理.
 function getData() {
@@ -235,6 +252,21 @@ program
        const target = updateTask(id);
       // 追加完了メッセージを chalk の緑色で表示する.
       console.log(chalk.green(`タスクを完了にしました. ID: ${target.id}, タイトル: ${target.title}`));
+    } catch (err) {
+      console.error(chalk.red(err.message));
+    }
+  });
+
+// delete コマンド.
+program
+  .command('delete')
+  .argument('<id>', 'String argument')
+  .action((id) => {
+    try {
+      // タスク更新処理.
+       const target = deleteTask(id);
+      // 削除完了メッセージを chalk の緑色で表示する.
+      console.log(chalk.green(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
     } catch (err) {
       console.error(chalk.red(err.message));
     }
