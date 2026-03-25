@@ -19,23 +19,30 @@ const BACKUP_DIR = './backups';
 
 // タスク.
 class Task {
-  constructor(content) {
+  constructor(title) {
     // バリデーション.
-    this.#validate(content);
+    this.#validate(title);
 
     // ID: uuid で生成した一意のIDを付与.
     this.id = uuidv4();
     // 作成日時: dayjs で YYYY-MM-DD HH:mm 形式にして保存する.
     this.createdAt = dayjs().format('YYYY-MM-DD HH:mm');
-    // タスクの内容: 引数で受け取った内容を設定する.
-    this.content = content;
+    // タイトル: 引数で受け取ったタイトルを設定する.
+    this.title = title;
+    // 完了状態.
+    this.completed = false;
   }
 
   // 初期化時の入力チェック処理.
-  #validate(content) {
-    // タスク内容の入力チェック.
-    if(!content || !content.match(/\S/g)) throw new Error('タスクの内容を入力してください.');
+  #validate(title) {
+    // タイトルの入力チェック.
+    if(!title || !title.match(/\S/g)) throw new Error('タイトルを入力してください.');
     // ※必要に応じて最大文字数チェック.
+  }
+
+  // 完了状態から、タスクの状態を文字列で取得する.
+  getStatus() {
+    return this.completed ? '完了' : '未完了';
   }
 }
 
@@ -48,6 +55,34 @@ function addTask(task) {
   taskList.push(task);
   // データを保存.
   saveData(taskList);
+}
+
+// タスク表示処理.
+function viewTaskList() {
+  // データ取得.
+  const taskList = getData();
+  // データの件数チェック.
+  if(taskList.length) {
+    // 存在する場合、データを表示.
+    taskList.forEach(task => {
+      // 完了状態によって色を分ける.
+      if(task.completed) {
+        // 完了タスクはグレー.
+        console.log(chalk.gray(getText(task)));
+      } else {
+        // 未完了タスクは白色.
+        console.log(chalk.white(getText(task)));
+      }
+    });
+  } else {
+    // データが存在しない場合.
+    console.log('登録されているタスクはありません.');
+  }
+
+  // タスク表示のテキスト取得.
+  function getText(task) {
+    return `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.getStatus()}`;
+  }
 }
 
 
@@ -63,6 +98,10 @@ function getData() {
       console.warn('保存されているデータが不正です.');
       return initializeData();
     }
+    // タスククラスに変換.
+    data.forEach(task => {
+      Object.setPrototypeOf(task, Task.prototype);
+    });
     // データを返す.
     return data;
   } catch (err) {
@@ -92,7 +131,13 @@ function checkData(data) {
   // データが配列かチェック.
   if (!Array.isArray(data)) return false;
   // ※「中身がTaskか」の判定は、変換後instanceofでできなさそうなので未実施.
-  
+  for (let task of data) {
+    // 各フィールドの型チェック.
+    if(typeof task.id !== 'string') return false;
+    if(typeof task.createdAt !== 'string') return false;
+    if(typeof task.title !== 'string') return false;
+    if(typeof task.completed !== 'boolean') return false;
+  }
   return true;
 }
 
@@ -128,20 +173,31 @@ function backupData() {
 // add コマンド.
 program
   .command('add')
-  .argument('<content>', 'String argument')
-  .action((content) => {
+  .argument('<title>', 'String argument')
+  .action((title) => {
     try {
       // タスクを作成.
-      const task = new Task(content);
+      const task = new Task(title);
       // タスク追加処理.
       addTask(task);
       // 追加完了メッセージを chalk の緑色で表示する.
-      console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タスクの内容: ${task.content}`));
+      console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
     } catch (err) {
       console.error(err.message);
     }
   });
 
+// list コマンド.
+program
+  .command('list')
+  .action(() => {
+    try {
+      // タスク表示処理.
+      viewTaskList();
+    } catch (err) {
+      console.error(err.message);
+    }
+  });
 
 // process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
 program.parse();
