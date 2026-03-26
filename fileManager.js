@@ -6,11 +6,11 @@ const dayjs = require('dayjs');
 const Task = require('./task.js');
 
 // データ管理ファイル.
-const DATA_FILE = 'tasks.json';
+const DATA_FILE = `${__dirname}/tasks.json`;
 // DATA_FILEの初期値.
 const EMPTY_DATA = [];
 // データバックアップディレクトリ.
-const BACKUP_DIR = './backups';
+const BACKUP_DIR = `${__dirname}/backups`;
 
 
 // データ取得処理.
