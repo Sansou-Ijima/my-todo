@@ -33,7 +33,7 @@ function getData() {
         return data;
     } catch (err) {
         // デバック用.
-        console.error(err);
+        // console.error(err);
 
         console.warn('データの取得に失敗しました.');
         return initializeData();
@@ -47,7 +47,7 @@ function saveData(data) {
         fs.writeFileSync(DATA_FILE, JSON.stringify(data));
     } catch (err) {
         // デバック用.
-        console.error(err);
+        // console.error(err);
 
         throw new Error('データの保存に失敗しました.');
     }

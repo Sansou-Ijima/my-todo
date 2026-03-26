@@ -1,11 +1,15 @@
 // ターミナル出力の色付け.
 const chalk = require('chalk');
+// タスク定義.
+const Task = require('./task.js');
 // tasks.jsonの読み書き.
 const fileManager = require('./fileManager.js');
 
 
 // タスク追加処理.
 function addTask(task) {
+    // 登録するオブジェクトのチェック.
+    if(!(task instanceof Task)) throw new Error('Taskクラス以外のオブジェクトは登録できません.');
     // データ取得.
     const taskList = fileManager.getData();
     // データを追加.
@@ -46,20 +50,15 @@ function viewTaskList() {
 function updateTask(id) {
     // データ取得.
     const taskList = fileManager.getData();
-    // 対象を初期化.
-    let target = null;
-    // 対象のタスクを更新、取得.
-    for (let task of taskList) {
-        if (task.id === id) {
-            if (task.completed) throw new Error('指定のタスクはすでに完了になっています.');
-            task.completed = true;
-            target = task;
-            break;
-        }
-    }
+    // 対象を取得.
+    const target = taskList.find(task => task.id === id);
     // 対象の存在チェック.
     if (target) {
-        // 存在する場合、データを保存.
+        // 存在する場合、完了状態のチェック.
+        if (target.completed) throw new Error('指定のタスクはすでに完了になっています.');
+        // 完了状態を変更.
+        target.completed = true;
+        // データを保存.
         fileManager.saveData(taskList);
         return target;
     } else {
@@ -73,7 +72,7 @@ function deleteTask(id) {
     // データ取得.
     const taskList = fileManager.getData();
     // 対象のインデックスを取得.
-    let index = taskList.findIndex(task => task.id === id);
+    const index = taskList.findIndex(task => task.id === id);
     // 対象の存在チェック.
     if (index >= 0) {
         // 存在する場合、一覧からデータを削除.
