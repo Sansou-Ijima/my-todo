@@ -62,7 +62,7 @@ program
       // タスク更新処理.
       const target = commands.deleteTask(id);
       // 削除完了メッセージを chalk の緑色で表示する.
-      console.log(chalk.green(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
+      console.log(chalk.yellow(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
     } catch (err) {
       console.error(chalk.red(err.message));
     }
