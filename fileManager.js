@@ -15,7 +15,7 @@ const BACKUP_DIR = `${__dirname}/backups`;
 function getData() {
     try {
         // データを取りだす.
-        const dataJSON = fs.readFileSync(DATA_FILE);
+        const dataJSON = fs.readFileSync(DATA_FILE, 'utf-8');
         // JSONのデータをJavascriptのオブジェクトに変換.
         const data = JSON.parse(dataJSON);
         // データの整合性チェック.
@@ -33,8 +33,14 @@ function getData() {
         // デバック用.
         // console.error(err);
 
-        console.warn('データの取得に失敗しました.');
-        return initializeData();
+        // ファイル未作成の場合.
+        if(err.code === 'ENOENT') {
+            // データを初期化する.
+            console.warn('データファイルが存在しません.');
+            return initializeData();
+        }
+
+        throw new Error('データの取得に失敗しました.');
     }
 }
 
