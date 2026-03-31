@@ -7,8 +7,6 @@ const Task = require('./task.js');
 
 // データ管理ファイル.
 const DATA_FILE = `${__dirname}/tasks.json`;
-// DATA_FILEの初期値.
-const EMPTY_DATA = [];
 // データバックアップディレクトリ.
 const BACKUP_DIR = `${__dirname}/backups`;
 
@@ -74,9 +72,10 @@ function initializeData() {
     backupData();
 
     // 空の配列で初期化.
-    saveData(EMPTY_DATA);
+    const emptyData = []; // 初期化のたびに新しい空の配列を生成・返却する.
+    saveData(emptyData);
     console.warn('データを初期化しました.');
-    return EMPTY_DATA;
+    return emptyData;
 }
 
 // データバックアップ処理.
