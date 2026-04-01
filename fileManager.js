@@ -1,14 +1,10 @@
 // ファイルを扱うためのモジュール.
 const fs = require('fs');
-// 日時のフォーマット.
-const dayjs = require('dayjs');
 // タスク定義.
 const Task = require('./task.js');
 
 // データ管理ファイル.
 const DATA_FILE = `${__dirname}/tasks.json`;
-// データバックアップディレクトリ.
-const BACKUP_DIR = `${__dirname}/backups`;
 
 
 // データ取得処理.
@@ -74,9 +70,6 @@ function checkData(data) {
 
 // データ初期化処理.
 function initializeData() {
-    // バックアップを作成.
-    backupData();
-
     // 空の配列で初期化.
     const emptyData = []; // 初期化のたびに新しい空の配列を生成・返却する.
     saveData(emptyData);
@@ -84,27 +77,9 @@ function initializeData() {
     return emptyData;
 }
 
-// データバックアップ処理.
-function backupData() {
-    try {
-        // データファイル存在チェック.
-        if (!fs.existsSync(DATA_FILE)) return;
-        // バックアップディレクトリの存在チェック、作成.
-        if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR);
-        // ファイルをコピーする.
-        const timestamp = dayjs().format('YYYY-MM-DD_HH-mm-ss');
-        const fileName = `tasks_backup_${timestamp}.json`;
-        fs.copyFileSync(DATA_FILE, `${BACKUP_DIR}/${fileName}`);
-        console.warn(`データのバックアップを作成しました. :${BACKUP_DIR}/${fileName}`);
-    } catch (err) {
-        throw new Error('バックアップの作成に失敗しました.');
-    }
-}
-
 module.exports = {
     getData: getData,
     saveData: saveData,
     checkData: checkData,
-    initializeData: initializeData,
-    backupData: backupData
+    initializeData: initializeData
 }
