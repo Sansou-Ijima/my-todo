@@ -17,7 +17,7 @@ function getData() {
         // データの整合性チェック.
         if (!checkData(data)) {
             console.warn('保存されているデータが不正です.');
-            return initializeData();
+            return []; // 空の配列を返す.
         }
         // タスククラスに変換.
         data.forEach(task => {
@@ -33,7 +33,7 @@ function getData() {
         if(err.code === 'ENOENT') {
             // データを初期化する.
             console.warn('データファイルが存在しません.');
-            return initializeData();
+            return []; // 空の配列を返す.
         }
 
         throw new Error('データの取得に失敗しました.');
