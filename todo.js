@@ -62,6 +62,9 @@ program.exitOverride();
     // process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
     await program.parseAsync(process.argv);
   } catch (err) {
+    // エラーメッセージを chalk の赤色で表示する.
     console.error(chalk.red(err.message));
+    // 終了コードに 1 を設定する.
+    process.exitCode = 1
   }
 })();
