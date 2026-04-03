@@ -70,6 +70,5 @@ function checkData(data) {
 
 module.exports = {
     getData: getData,
-    saveData: saveData,
-    checkData: checkData
+    saveData: saveData
 }
