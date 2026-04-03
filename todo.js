@@ -52,6 +52,14 @@ program
     console.log(chalk.yellow(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
   });
 
+// デフォルトコマンド.
+program
+  .command('print-help', { isDefault: true, hidden: true })
+  .action(() => {
+    // ヘルプを表示する.
+    program.outputHelp();
+  });
+
 
 // エラー検出時にprocess.exit()ではなく、CommanderErrorをthrowする.
 program.exitOverride();
