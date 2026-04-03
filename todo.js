@@ -14,28 +14,20 @@ program
   .command('add')
   .argument('<title>', 'String argument')
   .action((title) => {
-    try {
-      // タスクを作成.
-      const task = new Task(title);
-      // タスク追加処理.
-      commands.addTask(task);
-      // 追加完了メッセージを chalk の緑色で表示する.
-      console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
-    } catch (err) {
-      console.error(chalk.red(err.message));
-    }
+    // タスクを作成.
+    const task = new Task(title);
+    // タスク追加処理.
+    commands.addTask(task);
+    // 追加完了メッセージを chalk の緑色で表示する.
+    console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
   });
 
 // list コマンド.
 program
   .command('list')
   .action(() => {
-    try {
-      // タスク表示処理.
-      commands.viewTaskList();
-    } catch (err) {
-      console.error(chalk.red(err.message));
-    }
+    // タスク表示処理.
+    commands.viewTaskList();
   });
 
 // done コマンド.
@@ -43,14 +35,10 @@ program
   .command('done')
   .argument('<id>', 'String argument')
   .action((id) => {
-    try {
-      // タスク更新処理.
-      const target = commands.updateTask(id);
-      // 追加完了メッセージを chalk の緑色で表示する.
-      console.log(chalk.green(`タスクを完了にしました. ID: ${target.id}, タイトル: ${target.title}`));
-    } catch (err) {
-      console.error(chalk.red(err.message));
-    }
+    // タスク更新処理.
+    const target = commands.updateTask(id);
+    // 追加完了メッセージを chalk の緑色で表示する.
+    console.log(chalk.green(`タスクを完了にしました. ID: ${target.id}, タイトル: ${target.title}`));
   });
 
 // delete コマンド.
@@ -58,16 +46,33 @@ program
   .command('delete')
   .argument('<id>', 'String argument')
   .action((id) => {
-    try {
-      // タスク更新処理.
-      const target = commands.deleteTask(id);
-      // 削除完了メッセージを chalk の緑色で表示する.
-      console.log(chalk.yellow(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
-    } catch (err) {
-      console.error(chalk.red(err.message));
-    }
+    // タスク更新処理.
+    const target = commands.deleteTask(id);
+    // 削除完了メッセージを chalk の緑色で表示する.
+    console.log(chalk.yellow(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
+  });
+
+// デフォルトコマンド.
+program
+  .command('print-help', { isDefault: true, hidden: true })
+  .action(() => {
+    // ヘルプを表示する.
+    program.outputHelp();
   });
 
 
-// process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
-program.parse();
+// エラー検出時にprocess.exit()ではなく、CommanderErrorをthrowする.
+program.exitOverride();
+
+// async関数の中でawaitを呼び出す.
+(async () => {
+  try {
+    // process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
+    await program.parseAsync(process.argv);
+  } catch (err) {
+    // エラーメッセージを chalk の赤色で表示する.
+    console.error(chalk.red(err.message));
+    // 終了コードに 1 を設定する.
+    process.exitCode = 1
+  }
+})();
