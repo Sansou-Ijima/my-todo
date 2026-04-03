@@ -3,8 +3,6 @@ const commander = require('commander');
 const program = new commander.Command();
 // ターミナル出力の色付け.
 const chalk = require('chalk');
-// タスク定義.
-const Task = require('./task.js');
 // 各コマンドの処理.
 const commands = require('./commands.js');
 
@@ -14,10 +12,8 @@ program
   .command('add')
   .argument('<title>', 'String argument')
   .action((title) => {
-    // タスクを作成.
-    const task = new Task(title);
     // タスク追加処理.
-    commands.addTask(task);
+    const task = commands.addTask(title);
     // 追加完了メッセージを chalk の緑色で表示する.
     console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
   });

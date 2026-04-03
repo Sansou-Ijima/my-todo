@@ -1,21 +1,36 @@
+// 一意なIDの生成.
+const { v4: uuidv4 } = require('uuid');
+// 日時のフォーマット.
+const dayjs = require('dayjs');
 // ターミナル出力の色付け.
 const chalk = require('chalk');
-// タスク定義.
-const Task = require('./task.js');
 // tasks.jsonの読み書き.
 const fileManager = require('./fileManager.js');
 
 
 // タスク追加処理.
-function addTask(task) {
-    // 登録するオブジェクトのチェック.
-    if(!(task instanceof Task)) throw new Error('Taskクラス以外のオブジェクトは登録できません.');
+function addTask(title) {
+    // タイトルの入力チェック.
+    if (!title || !title.match(/\S/g)) throw new Error('タイトルを入力してください.');
     // データ取得.
     const taskList = fileManager.getData();
+    // タスクを作成.
+    const task = {
+        // ID: uuid で生成した一意のIDを付与.
+        id: uuidv4(),
+        // 作成日時: dayjs で YYYY-MM-DD HH:mm 形式にして保存する.
+        createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
+        // タイトル: 引数で受け取ったタイトルを設定する.
+        title: title,
+        // 完了状態: デフォルトでfalse（未完了）を設定.
+        completed: false
+    }
     // データを追加.
     taskList.push(task);
     // データを保存.
     fileManager.saveData(taskList);
+    // 追加したタスクを返す.
+    return task;
 }
 
 // タスク表示処理.
@@ -28,7 +43,7 @@ function viewTaskList() {
         return;
     }
     // 表示内容のフォーマット.
-    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.getStatus()}`;
+    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}`;
     // 表示色の設定.
     const pickColor = (task) => (task.completed ? chalk.gray : chalk.white);
     // タスクを表示する.
@@ -51,6 +66,7 @@ function updateTask(id) {
     target.completed = true;
     // データを保存.
     fileManager.saveData(taskList);
+    // 更新したタスクを返す.
     return target;
 }
 
@@ -66,6 +82,7 @@ function deleteTask(id) {
     const target = taskList.splice(index, 1).shift();
     // データを保存.
     fileManager.saveData(taskList);
+    // 削除したタスクを返す.
     return target;
 }
 

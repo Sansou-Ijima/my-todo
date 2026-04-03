@@ -1,8 +1,5 @@
 // ファイルを扱うためのモジュール.
 const fs = require('fs');
-// タスク定義.
-const Task = require('./task.js');
-
 // データ管理ファイル.
 const DATA_FILE = `${__dirname}/tasks.json`;
 
@@ -19,10 +16,6 @@ function getData() {
             console.warn('保存されているデータが不正です.');
             return []; // 空の配列を返す.
         }
-        // タスククラスに変換.
-        data.forEach(task => {
-            Object.setPrototypeOf(task, Task.prototype);
-        });
         // データを返す.
         return data;
     } catch (err) {
@@ -30,7 +23,7 @@ function getData() {
         // console.error(err);
 
         // ファイル未作成の場合.
-        if(err.code === 'ENOENT') {
+        if (err.code === 'ENOENT') {
             // データを初期化する.
             console.warn('データファイルが存在しません.');
             return []; // 空の配列を返す.
@@ -57,7 +50,6 @@ function saveData(data) {
 function checkData(data) {
     // データが配列かチェック.
     if (!Array.isArray(data)) return false;
-    // ※「中身がTaskか」の判定は、変換後instanceofでできなさそうなので未実施.
     for (let task of data) {
         // 各フィールドの型チェック.
         if (typeof task.id !== 'string') return false;
