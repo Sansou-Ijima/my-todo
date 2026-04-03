@@ -68,18 +68,8 @@ function checkData(data) {
     return true;
 }
 
-// データ初期化処理.
-function initializeData() {
-    // 空の配列で初期化.
-    const emptyData = []; // 初期化のたびに新しい空の配列を生成・返却する.
-    saveData(emptyData);
-    console.warn('データを初期化しました.');
-    return emptyData;
-}
-
 module.exports = {
     getData: getData,
     saveData: saveData,
-    checkData: checkData,
-    initializeData: initializeData
+    checkData: checkData
 }
