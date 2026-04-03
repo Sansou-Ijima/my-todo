@@ -23,27 +23,18 @@ function viewTaskList() {
     // データ取得.
     const taskList = fileManager.getData();
     // データの件数チェック.
-    if (taskList.length) {
-        // 存在する場合、データを表示.
-        taskList.forEach(task => {
-            // 完了状態によって色を分ける.
-            if (task.completed) {
-                // 完了タスクはグレー.
-                console.log(chalk.gray(getText(task)));
-            } else {
-                // 未完了タスクは白色.
-                console.log(chalk.white(getText(task)));
-            }
-        });
-    } else {
-        // データが存在しない場合.
+    if (taskList.length === 0) {
         console.log('登録されているタスクはありません.');
+        return;
     }
-
-    // タスク表示のテキスト取得.
-    function getText(task) {
-        return `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.getStatus()}`;
-    }
+    // 表示内容のフォーマット.
+    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.getStatus()}`;
+    // 表示色の設定.
+    const pickColor = (task) => (task.completed ? chalk.gray : chalk.white);
+    // タスクを表示する.
+    taskList.forEach((task) => {
+        console.log(pickColor(task)(formatTask(task)));
+    });
 }
 
 // タスク更新処理.
@@ -53,18 +44,14 @@ function updateTask(id) {
     // 対象を取得.
     const target = taskList.find(task => task.id === id);
     // 対象の存在チェック.
-    if (target) {
-        // 存在する場合、完了状態のチェック.
-        if (target.completed) throw new Error('指定のタスクはすでに完了になっています.');
-        // 完了状態を変更.
-        target.completed = true;
-        // データを保存.
-        fileManager.saveData(taskList);
-        return target;
-    } else {
-        // 存在しない場合、エラーを投げる.
-        throw new Error('指定のIDに該当するタスクが存在しません.');
-    }
+    if (!target) throw new Error('指定のIDに該当するタスクが存在しません.');
+    // 完了状態のチェック.
+    if (target.completed) throw new Error('指定のタスクはすでに完了になっています.');
+    // 完了状態を変更.
+    target.completed = true;
+    // データを保存.
+    fileManager.saveData(taskList);
+    return target;
 }
 
 // タスク削除処理.
@@ -74,15 +61,12 @@ function deleteTask(id) {
     // 対象のインデックスを取得.
     const index = taskList.findIndex(task => task.id === id);
     // 対象の存在チェック.
-    if (index >= 0) {
-        // 存在する場合、一覧からデータを削除.
-        const target = taskList.splice(index, 1).shift();
-        fileManager.saveData(taskList);
-        return target;
-    } else {
-        // 存在しない場合、エラーを投げる.
-        throw new Error('指定のIDに該当するタスクが存在しません.');
-    }
+    if (index < 0) throw new Error('指定のIDに該当するタスクが存在しません.');
+    // 一覧からデータを削除.
+    const target = taskList.splice(index, 1).shift();
+    // データを保存.
+    fileManager.saveData(taskList);
+    return target;
 }
 
 module.exports = {
