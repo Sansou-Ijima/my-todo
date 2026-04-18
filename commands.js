@@ -9,7 +9,7 @@ const fileManager = require('./fileManager.js');
 
 
 // タスク追加処理.
-function addTask(title) {
+function addTask(title, priority) {
     // タイトルの入力チェック.
     if (!title || !title.match(/\S/g)) throw new Error('タイトルを入力してください.');
     // データ取得.
@@ -23,7 +23,9 @@ function addTask(title) {
         // タイトル: 引数で受け取ったタイトルを設定する.
         title: title,
         // 完了状態: デフォルトでfalse（未完了）を設定.
-        completed: false
+        completed: false,
+        // 優先度: 引数で受け取った優先度を設定する.
+        priority: priority
     }
     // データを追加.
     taskList.push(task);
@@ -52,13 +54,19 @@ function viewTaskList(options) {
         return;
     }
     // 表示内容のフォーマット.
-    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}`;
+    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}, 優先度: ${task.priority}`;
     // 表示色の設定.
-    const pickColor = (task) => (task.completed ? chalk.gray : chalk.white);
+    const priorityColorMap = {
+        high: chalk.red,
+        medium: chalk.yellow,
+        low: chalk.white
+    }
+    const pickColor = (task) => {
+        if (task.completed) return chalk.gray;
+        return priorityColorMap[task.priority];
+    };
     // タスクを表示する.
-    taskList.forEach((task) => {
-        console.log(pickColor(task)(formatTask(task)));
-    });
+    taskList.map((task) => pickColor(task)(formatTask(task))).forEach(taskView => console.log(taskView));
 }
 
 // タスク検索処理.
@@ -72,13 +80,11 @@ function searchTask(text) {
         return;
     }
     // 表示内容のフォーマット.
-    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}`;
+    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}, 優先度: ${task.priority}`;
     // 表示色の設定.
     const pickColor = (task) => (task.completed ? chalk.gray : chalk.white);
     // タスクを表示する.
-    taskList.forEach((task) => {
-        console.log(pickColor(task)(formatTask(task)));
-    });
+    taskList.map((task) => pickColor(task)(formatTask(task))).forEach(taskView => console.log(taskView));
 }
 
 // タスク更新処理.

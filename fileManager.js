@@ -56,6 +56,7 @@ function checkData(data) {
         if (typeof task.createdAt !== 'string') return false;
         if (typeof task.title !== 'string') return false;
         if (typeof task.completed !== 'boolean') return false;
+        if (typeof task.priority !== 'string') return false;
     }
     return true;
 }

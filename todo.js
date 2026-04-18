@@ -7,15 +7,26 @@ const chalk = require('chalk');
 const commands = require('./commands.js');
 
 
+// オプションの入力チェック関数.
+function checkPriority(value, dummyPrevious) {
+  // 優先度は high / medium / low の3段階.
+  const type = ['high', 'medium', 'low'];
+  // 指定の値をチェック.
+  if (!type.includes(value)) throw new commander.InvalidArgumentError('priorityは high / medium / low の中から指定してください。');
+  // 指定の値を返す.
+  return value;
+}
+
 // add コマンド.
 program
   .command('add')
+  .option('--priority <type>', 'タスクの優先度', checkPriority, 'medium')
   .argument('<title>', 'String argument')
-  .action((title) => {
+  .action((title, options) => {
     // タスク追加処理.
-    const task = commands.addTask(title);
+    const task = commands.addTask(title, options.priority);
     // 追加完了メッセージを chalk の緑色で表示する.
-    console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}`));
+    console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}, 優先度: ${task.priority}`));
   });
 
 // list コマンド.
