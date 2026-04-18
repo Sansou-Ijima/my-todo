@@ -87,6 +87,25 @@ function searchTask(text) {
     taskList.map((task) => pickColor(task)(formatTask(task))).forEach(taskView => console.log(taskView));
 }
 
+// 統計表示処理.
+function viewStats() {
+    // データ取得.
+    const taskList = fileManager.getData();
+    // 全タスク数.
+    const total = taskList.length;
+    // 完了タスク数.
+    const completed = taskList.filter(task => task.completed).length;
+    // 未完了タスク数.
+    const notCompleted = taskList.filter(task => !task.completed).length;
+    // 完了率（パーセンテージ）.
+    const completedRate = total === 0 ? 0 : (completed / total) * 100;
+    // 直近7日以内に作成されたタスクの件数（dayjs を使って判定する）.
+    const isWithin7Days = (task) => dayjs(task.createdAt).isAfter(dayjs().subtract(7, 'day'));
+    const recent = taskList.filter(task => isWithin7Days(task)).length;
+    // 統計を表示する.
+    console.log(`全タスク数: ${total}, 完了タスク数: ${completed}, 未完了タスク数: ${notCompleted}, 完了率: ${completedRate}%, 直近7日以内に作成されたタスクの件数: ${recent}`)
+}
+
 // タスク更新処理.
 function updateTask(id) {
     // データ取得.
@@ -125,6 +144,7 @@ module.exports = {
     addTask: addTask,
     viewTaskList: viewTaskList,
     searchTask: searchTask,
+    viewStats: viewStats,
     updateTask: updateTask,
     deleteTask: deleteTask
 }

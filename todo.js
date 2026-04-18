@@ -49,6 +49,14 @@ program
     commands.searchTask(text);
   });
 
+// stats コマンド.
+program
+  .command('stats')
+  .action(() => {
+    // 統計表示処理.
+    commands.viewStats();
+  });
+
 // done コマンド.
 program
   .command('done')
