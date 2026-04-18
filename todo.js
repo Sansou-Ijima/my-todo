@@ -21,9 +21,12 @@ program
 // list コマンド.
 program
   .command('list')
-  .action(() => {
+  .option('--done', '完了タスクのみを表示する')
+  .option('--todo', '未完了タスクのみを表示する')
+  .action((options) => {
+    // todo: オプションの複数指定チェック or 複数指定時に両方表示する.
     // タスク表示処理.
-    commands.viewTaskList();
+    commands.viewTaskList(options);
   });
 
 // done コマンド.

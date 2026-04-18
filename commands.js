@@ -34,9 +34,18 @@ function addTask(title) {
 }
 
 // タスク表示処理.
-function viewTaskList() {
+function viewTaskList(options) {
+    // フィルター条件.
+    const filterType = (options) => {
+        // 完了タスクのみを表示する.
+        if (options.done) return task => task.completed;
+        // 未完了タスクのみを表示する.
+        if (options.todo) return task => !task.completed;
+        // 全件表示する.
+        return () => true;
+    }
     // データ取得.
-    const taskList = fileManager.getData();
+    const taskList = fileManager.getData().filter(filterType(options));
     // データの件数チェック.
     if (taskList.length === 0) {
         console.log('登録されているタスクはありません.');
