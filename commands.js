@@ -61,6 +61,26 @@ function viewTaskList(options) {
     });
 }
 
+// タスク検索処理.
+function searchTask(text) {
+    // データ取得.
+    const taskList = fileManager.getData().filter(task => task.title.includes(text));
+    // todo: 以下 viewTaskList の処理と共通化.
+    // データの件数チェック.
+    if (taskList.length === 0) {
+        console.log('登録されているタスクはありません.');
+        return;
+    }
+    // 表示内容のフォーマット.
+    const formatTask = (task) => `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}`;
+    // 表示色の設定.
+    const pickColor = (task) => (task.completed ? chalk.gray : chalk.white);
+    // タスクを表示する.
+    taskList.forEach((task) => {
+        console.log(pickColor(task)(formatTask(task)));
+    });
+}
+
 // タスク更新処理.
 function updateTask(id) {
     // データ取得.
@@ -98,6 +118,7 @@ function deleteTask(id) {
 module.exports = {
     addTask: addTask,
     viewTaskList: viewTaskList,
+    searchTask: searchTask,
     updateTask: updateTask,
     deleteTask: deleteTask
 }

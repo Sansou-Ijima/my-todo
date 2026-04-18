@@ -29,6 +29,15 @@ program
     commands.viewTaskList(options);
   });
 
+// search コマンド.
+program
+  .command('search')
+  .argument('<text>', 'String argument')
+  .action((text) => {
+    // タスク検索処理.
+    commands.searchTask(text);
+  });
+
 // done コマンド.
 program
   .command('done')
