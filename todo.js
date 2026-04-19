@@ -5,6 +5,8 @@ const program = new commander.Command();
 const chalk = require('chalk');
 // 各コマンドの処理.
 const commands = require('./commands.js');
+// 表示処理.
+const viewer = require('./viewer.js');
 
 
 // オプションの入力チェック関数.
@@ -17,6 +19,7 @@ function checkPriority(value, dummyPrevious) {
   return value;
 }
 
+
 // add コマンド.
 program
   .command('add')
@@ -25,8 +28,8 @@ program
   .action((title, options) => {
     // タスク追加処理.
     const task = commands.addTask(title, options.priority);
-    // 追加完了メッセージを chalk の緑色で表示する.
-    console.log(chalk.green(`タスクを追加しました. ID: ${task.id}, タイトル: ${task.title}, 優先度: ${task.priority}`));
+    // 完了メッセージ表示処理.
+    viewer.viewCompleteMessage(task, 'add');
   });
 
 // list コマンド.
@@ -36,8 +39,10 @@ program
   .option('--todo', '未完了タスクのみを表示する')
   .action((options) => {
     // todo: オプションの複数指定チェック or 複数指定時に両方表示する.
+    // タスク一覧取得処理.
+    const taskList = commands.getTaskList(options);
     // タスク表示処理.
-    commands.viewTaskList(options);
+    viewer.viewTask(taskList, 'list');
   });
 
 // search コマンド.
@@ -46,15 +51,19 @@ program
   .argument('<text>', 'String argument')
   .action((text) => {
     // タスク検索処理.
-    commands.searchTask(text);
+    const taskList = commands.searchTask(text);
+    // タスク表示処理.
+    viewer.viewTask(taskList, 'search');
   });
 
 // stats コマンド.
 program
   .command('stats')
   .action(() => {
+    // 統計取得処理.
+    const status = commands.getStats();
     // 統計表示処理.
-    commands.viewStats();
+    viewer.viewStatus(status);
   });
 
 // done コマンド.
@@ -64,8 +73,8 @@ program
   .action((id) => {
     // タスク更新処理.
     const target = commands.updateTask(id);
-    // 追加完了メッセージを chalk の緑色で表示する.
-    console.log(chalk.green(`タスクを完了にしました. ID: ${target.id}, タイトル: ${target.title}`));
+    // 完了メッセージ表示処理.
+    viewer.viewCompleteMessage(target, 'done');
   });
 
 // delete コマンド.
@@ -75,8 +84,8 @@ program
   .action((id) => {
     // タスク更新処理.
     const target = commands.deleteTask(id);
-    // 削除完了メッセージを chalk の緑色で表示する.
-    console.log(chalk.yellow(`タスクを削除しました. ID: ${target.id}, タイトル: ${target.title}`));
+    // 完了メッセージ表示処理.
+    viewer.viewCompleteMessage(target, 'delete');
   });
 
 // デフォルトコマンド.
