@@ -17,33 +17,23 @@ function formatCompleteMessage(actionMessage, task) {
     return `タスクを${actionMessage}. ${formatTask(task)}`
 }
 
-// actionに応じたchalk関数を返す.
-function getPickColorFunc(action) {
-    // 優先度に応じたchalk関数.
-    const priorityColorMap = {
-        'high': chalk.red,
-        'medium': chalk.yellow,
-        'low': chalk.white
-    }
-    // actionに応じたchalk関数.
-    const actionColorMap = {
-        'list': task => task.completed ? chalk.gray : priorityColorMap[task.priority],
-        'search': task => task.completed ? chalk.gray : chalk.white
-    }
-    return actionColorMap[action];
-}
-
 
 // タスクの一覧表示処理.
-function viewTask(taskList, action) {
+function viewTask(taskList) {
     // データの件数チェック.
     if (taskList.length === 0) {
         console.log('登録されているタスクはありません.');
         return;
     }
 
+    // 優先度に応じたchalk関数.
+    const priorityColorMap = {
+        'high': chalk.red,
+        'medium': chalk.yellow,
+        'low': chalk.white
+    }
     // 表示色の設定.
-    const pickColor = getPickColorFunc(action);
+    const pickColor = task => task.completed ? chalk.gray : priorityColorMap[task.priority];
 
     // タスクを表示する.
     taskList.map((task) => pickColor(task)(formatTask(task))).forEach(taskView => console.log(taskView));

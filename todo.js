@@ -42,7 +42,7 @@ program
     // タスク一覧取得処理.
     const taskList = commands.getTaskList(options);
     // タスク表示処理.
-    viewer.viewTask(taskList, 'list');
+    viewer.viewTask(taskList);
   });
 
 // search コマンド.
@@ -53,7 +53,7 @@ program
     // タスク検索処理.
     const taskList = commands.searchTask(text);
     // タスク表示処理.
-    viewer.viewTask(taskList, 'search');
+    viewer.viewTask(taskList);
   });
 
 // stats コマンド.
