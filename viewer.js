@@ -22,7 +22,7 @@ function formatCompleteMessage(actionMessage, task) {
 function viewTask(taskList) {
     // データの件数チェック.
     if (taskList.length === 0) {
-        console.log('登録されているタスクはありません.');
+        console.log('該当するタスクはありません.');
         return;
     }
 
