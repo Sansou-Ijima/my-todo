@@ -46,14 +46,16 @@ function viewStatus(status) {
 
 // 完了メッセージの表示処理.
 function viewCompleteMessage(task, action) {
-    // action毎のメッセージ.
-    let actionMessages = {
-        'add': '追加しました',
-        'done': '完了にしました',
-        'delete': '削除しました'
+    // action毎のメッセージ設定.
+    const actionMessages = {
+        'add': { 'message': '追加しました', 'color': chalk.green },
+        'done': { 'message': '完了にしました', 'color': chalk.green },
+        'delete': { 'message': '削除しました', 'color': chalk.yellow }
     };
-    // 完了メッセージを chalk の緑色で表示する.
-    console.log(chalk.green(formatCompleteMessage(actionMessages[action], task)));
+    // 指定アクションの設定を取得.
+    const messageSetting = actionMessages[action];
+    // 完了メッセージを表示する.
+    console.log(messageSetting.color(formatCompleteMessage(messageSetting.message, task)));
 }
 
 module.exports = {
