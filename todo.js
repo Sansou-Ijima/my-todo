@@ -7,14 +7,14 @@ const chalk = require('chalk');
 const commands = require('./commands.js');
 // 表示処理.
 const viewer = require('./viewer.js');
+// 優先度の種別一覧.
+const { PRIORITY_TYPES } = require('./priorityTypes.js');
 
 
 // オプションの入力チェック関数.
 function checkPriority(value, dummyPrevious) {
-  // 優先度は high / medium / low の3段階.
-  const type = ['high', 'medium', 'low'];
   // 指定の値をチェック.
-  if (!type.includes(value)) throw new commander.InvalidArgumentError('priorityは high / medium / low の中から指定してください。');
+  if (!PRIORITY_TYPES.includes(value)) throw new commander.InvalidArgumentError('priorityは high / medium / low の中から指定してください。');
   // 指定の値を返す.
   return value;
 }

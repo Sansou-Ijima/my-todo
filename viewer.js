@@ -33,7 +33,7 @@ function viewTask(taskList) {
         'low': chalk.white
     }
     // 表示色の設定.
-    const pickColor = task => task.completed ? chalk.gray : priorityColorMap[task.priority];
+    const pickColor = task => task.completed ? chalk.gray : (priorityColorMap[task.priority] ?? chalk.yellow);
 
     // タスクを表示する.
     taskList.map((task) => pickColor(task)(formatTask(task))).forEach(taskView => console.log(taskView));
