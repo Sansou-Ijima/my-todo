@@ -79,6 +79,9 @@ function getTaskList(options) {
 
 // タスク検索処理.
 function searchTask(text) {
+    // テキストの入力チェック.
+    if (!text) throw new Error('テキストを入力してください.');
+
     // データを取得し、フィルターして返す.
     return fileManager.getData().filter(task => task.title.includes(text));
 }
