@@ -1,6 +1,7 @@
 // コマンドライン引数の解析.
 const commander = require('commander');
 const program = new commander.Command();
+const Option = commander.Option;
 // ターミナル出力の色付け.
 const chalk = require('chalk');
 // 各コマンドの処理.
@@ -35,10 +36,9 @@ program
 // list コマンド.
 program
   .command('list')
-  .option('--done', '完了タスクのみを表示する')
-  .option('--todo', '未完了タスクのみを表示する')
+  .addOption(new Option('--done', '完了タスクのみを表示する').conflicts('todo'))
+  .addOption(new Option('--todo', '未完了タスクのみを表示する').conflicts('done'))
   .action((options) => {
-    // todo: オプションの複数指定チェック or 複数指定時に両方表示する.
     // タスク一覧取得処理.
     const taskList = commands.getTaskList(options);
     // タスク表示処理.
