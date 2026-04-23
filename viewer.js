@@ -20,10 +20,15 @@ function formatCompleteMessage(actionMessage, task) {
 
 
 // タスクの一覧表示処理.
-function viewTask(taskList) {
+function viewTask(taskList, action) {
     // データの件数チェック.
     if (taskList.length === 0) {
-        console.log('該当するタスクはありません.');
+        // action毎のメッセージ設定.
+        const actionMessages = {
+            'list': '登録されているタスクはありません.',
+            'search': '検索条件に該当するタスクはありません.'
+        };
+        console.log(actionMessages[action] ?? '該当するタスクはありません.');
         return;
     }
 
