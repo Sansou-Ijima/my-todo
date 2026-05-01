@@ -11,14 +11,17 @@ const viewer = require("./viewer.js");
 // 優先度の種別一覧.
 const { PRIORITY_TYPES } = require("./priorityTypes.js");
 
-// オプションの入力チェック関数.
+/**
+ * 指定の値が優先度の種別一覧に含まれているかをチェックします.
+ * @param {string} value 指定の値（オプション引数）.
+ * @param {string} dummyPrevious ダミー値（オプションの以前の値）.
+ * @returns {string} 指定の値.
+ */
 function checkPriority(value, dummyPrevious) {
-  // 指定の値をチェック.
   if (!PRIORITY_TYPES.includes(value))
     throw new commander.InvalidArgumentError(
       "priorityは high / medium / low の中から指定してください。",
     );
-  // 指定の値を返す.
   return value;
 }
 
@@ -28,9 +31,8 @@ program
   .option("--priority <type>", "タスクの優先度", checkPriority, "medium")
   .argument("<title>", "String argument")
   .action((title, options) => {
-    // タスク追加処理.
     const task = commands.addTask(title, options.priority);
-    // 完了メッセージ表示処理.
+
     viewer.viewCompleteMessage(task, "add");
   });
 
@@ -42,9 +44,8 @@ program
     new Option("--todo", "未完了タスクのみを表示する").conflicts("done"),
   )
   .action((options) => {
-    // タスク一覧取得処理.
     const taskList = commands.getTaskList(options);
-    // タスク表示処理.
+
     viewer.viewTask(taskList, "list");
   });
 
@@ -53,17 +54,15 @@ program
   .command("search")
   .argument("<text>", "String argument")
   .action((text) => {
-    // タスク検索処理.
     const taskList = commands.searchTask(text);
-    // タスク表示処理.
+
     viewer.viewTask(taskList, "search");
   });
 
 // stats コマンド.
 program.command("stats").action(() => {
-  // 統計取得処理.
   const status = commands.getStats();
-  // 統計表示処理.
+
   viewer.viewStatus(status);
 });
 
@@ -72,9 +71,8 @@ program
   .command("done")
   .argument("<id>", "String argument")
   .action((id) => {
-    // タスク更新処理.
     const target = commands.updateTask(id);
-    // 完了メッセージ表示処理.
+
     viewer.viewCompleteMessage(target, "done");
   });
 
@@ -83,15 +81,13 @@ program
   .command("delete")
   .argument("<id>", "String argument")
   .action((id) => {
-    // タスク更新処理.
     const target = commands.deleteTask(id);
-    // 完了メッセージ表示処理.
+
     viewer.viewCompleteMessage(target, "delete");
   });
 
 // デフォルトコマンド.
 program.command("print-help", { isDefault: true, hidden: true }).action(() => {
-  // ヘルプを表示する.
   program.outputHelp();
 });
 

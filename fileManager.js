@@ -5,27 +5,28 @@ const DATA_FILE = `${__dirname}/tasks.json`;
 // 優先度の種別一覧.
 const { PRIORITY_TYPES } = require("./priorityTypes.js");
 
-// データ取得処理.
+/**
+ * データを取得します.
+ * @returns {object} データ（タスク一覧）.
+ */
 function getData() {
   try {
-    // データを取りだす.
     const dataJSON = fs.readFileSync(DATA_FILE, "utf-8");
-    // JSONのデータをJavascriptのオブジェクトに変換.
+
     const data = JSON.parse(dataJSON);
-    // データの整合性チェック.
+
     if (!checkData(data)) {
       console.warn("保存されているデータが不正です.");
       return []; // 空の配列を返す.
     }
-    // データを返す.
+
     return data;
   } catch (err) {
     // デバック用.
     // console.error(err);
 
-    // ファイル未作成の場合.
+    // ファイルが存在しない場合.
     if (err.code === "ENOENT") {
-      // データを初期化する.
       console.warn("データファイルが存在しません.");
       return []; // 空の配列を返す.
     }
@@ -34,10 +35,12 @@ function getData() {
   }
 }
 
-// データ保存処理.
+/**
+ * データを保存します.
+ * @param {object} data データ（タスク一覧）.
+ */
 function saveData(data) {
   try {
-    // タスクのデータは tasks.json ファイルに保存する.
     fs.writeFileSync(DATA_FILE, JSON.stringify(data));
   } catch (err) {
     // デバック用.
@@ -47,9 +50,12 @@ function saveData(data) {
   }
 }
 
-// データチェック処理.
+/**
+ * データの整合性をチェックします.
+ * @param {object} data データ（タスク一覧）.
+ * @returns {boolean} 整合性.
+ */
 function checkData(data) {
-  // データが配列かチェック.
   if (!Array.isArray(data)) return false;
   for (let task of data) {
     // 各フィールドの型チェック.

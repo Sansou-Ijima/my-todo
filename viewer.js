@@ -18,9 +18,12 @@ function formatCompleteMessage(actionMessage, task) {
   return `タスクを${actionMessage}. ${formatTask(task)}`;
 }
 
-// タスクの一覧表示処理.
+/**
+ * タスク一覧を表示します.
+ * @param {object} taskList タスク一覧.
+ * @param {string} action アクション.
+ */
 function viewTask(taskList, action) {
-  // データの件数チェック.
   if (taskList.length === 0) {
     // action毎のメッセージ設定.
     const actionMessages = {
@@ -37,18 +40,24 @@ function viewTask(taskList, action) {
   const pickColor = (task) =>
     task.completed ? chalk.gray : (priorityColor(task) ?? chalk.yellow);
 
-  // タスクを表示する.
   taskList
     .map((task) => pickColor(task)(formatTask(task)))
     .forEach((taskView) => console.log(taskView));
 }
 
-// 統計の表示処理.
+/**
+ * 統計を表示します.
+ * @param {object} status 統計.
+ */
 function viewStatus(status) {
   console.log(formatStatus(status));
 }
 
-// 完了メッセージの表示処理.
+/**
+ * 完了メッセージを表示します.
+ * @param {object} task タスク.
+ * @param {string} action アクション.
+ */
 function viewCompleteMessage(task, action) {
   // action毎のメッセージ設定.
   const actionMessages = {
@@ -56,9 +65,9 @@ function viewCompleteMessage(task, action) {
     done: { message: "完了にしました", color: chalk.green },
     delete: { message: "削除しました", color: chalk.yellow },
   };
-  // 指定アクションの設定を取得.
+
   const messageSetting = actionMessages[action];
-  // 完了メッセージを表示する.
+
   console.log(
     messageSetting.color(formatCompleteMessage(messageSetting.message, task)),
   );
