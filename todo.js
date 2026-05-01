@@ -14,10 +14,9 @@ const { PRIORITY_TYPES } = require("./priorityTypes.js");
 /**
  * 指定の値が優先度の種別一覧に含まれているかをチェックします.
  * @param {string} value 指定の値（オプション引数）.
- * @param {string} dummyPrevious ダミー値（オプションの以前の値）.
  * @returns {string} 指定の値.
  */
-function checkPriority(value, dummyPrevious) {
+function checkPriority(value) {
   if (!PRIORITY_TYPES.includes(value))
     throw new commander.InvalidArgumentError(
       "priorityは high / medium / low の中から指定してください。",
