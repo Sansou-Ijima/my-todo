@@ -7,7 +7,7 @@ const chalk = require("chalk");
 // 各コマンドの処理.
 const commands = require("./commands.js");
 // 表示処理.
-const viewer = require("./viewer.js");
+const output = require("./output.js");
 // 優先度の種別一覧.
 const { PRIORITY_TYPES } = require("./priorityTypes.js");
 
@@ -33,7 +33,7 @@ program
   .action((title, options) => {
     const task = commands.addTask(title, options.priority);
 
-    viewer.viewCompleteMessage(task, "add");
+    output.outputCompleteMessage(task, "add");
   });
 
 // list コマンド.
@@ -46,7 +46,7 @@ program
   .action((options) => {
     const taskList = commands.getTaskList(options);
 
-    viewer.viewTask(taskList, "list");
+    output.outputTask(taskList, "list");
   });
 
 // search コマンド.
@@ -56,14 +56,14 @@ program
   .action((text) => {
     const taskList = commands.searchTask(text);
 
-    viewer.viewTask(taskList, "search");
+    output.outputTask(taskList, "search");
   });
 
 // stats コマンド.
 program.command("stats").action(() => {
   const status = commands.getStats();
 
-  viewer.viewStatus(status);
+  output.outputStatus(status);
 });
 
 // done コマンド.
@@ -73,7 +73,7 @@ program
   .action((id) => {
     const target = commands.updateTask(id);
 
-    viewer.viewCompleteMessage(target, "done");
+    output.outputCompleteMessage(target, "done");
   });
 
 // delete コマンド.
@@ -83,7 +83,7 @@ program
   .action((id) => {
     const target = commands.deleteTask(id);
 
-    viewer.viewCompleteMessage(target, "delete");
+    output.outputCompleteMessage(target, "delete");
   });
 
 // デフォルトコマンド.

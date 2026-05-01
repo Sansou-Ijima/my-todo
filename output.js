@@ -23,7 +23,7 @@ function formatCompleteMessage(actionMessage, task) {
  * @param {object} taskList タスク一覧.
  * @param {string} action アクション.
  */
-function viewTask(taskList, action) {
+function outputTask(taskList, action) {
   if (taskList.length === 0) {
     // action毎のメッセージ設定.
     const actionMessages = {
@@ -42,14 +42,14 @@ function viewTask(taskList, action) {
 
   taskList
     .map((task) => pickColor(task)(formatTask(task)))
-    .forEach((taskView) => console.log(taskView));
+    .forEach((formattedTask) => console.log(formattedTask));
 }
 
 /**
  * 統計を表示します.
  * @param {object} status 統計.
  */
-function viewStatus(status) {
+function outputStatus(status) {
   console.log(formatStatus(status));
 }
 
@@ -58,7 +58,7 @@ function viewStatus(status) {
  * @param {object} task タスク.
  * @param {string} action アクション.
  */
-function viewCompleteMessage(task, action) {
+function outputCompleteMessage(task, action) {
   // action毎のメッセージ設定.
   const actionMessages = {
     add: { message: "追加しました", color: chalk.green },
@@ -74,7 +74,7 @@ function viewCompleteMessage(task, action) {
 }
 
 module.exports = {
-  viewTask: viewTask,
-  viewStatus: viewStatus,
-  viewCompleteMessage: viewCompleteMessage,
+  outputTask: outputTask,
+  outputStatus: outputStatus,
+  outputCompleteMessage: outputCompleteMessage,
 };
