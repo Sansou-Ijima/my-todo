@@ -1,7 +1,7 @@
 // ターミナル出力の色付け.
 const chalk = require("chalk");
-// 優先度の種別一覧.
-const { PRIORITIES } = require("./priorityTypes.js");
+// 優先度に応じた色名取得関数.
+const priorities = require("./priorityTypes.js");
 
 // タスク表示内容のフォーマット.
 function formatTask(task) {
@@ -35,10 +35,10 @@ function outputTask(taskList, action) {
   }
 
   // 優先度に応じたchalk関数.
-  const priorityColor = (task) => chalk[PRIORITIES[task.priority].color];
+  const priorityColor = (task) => chalk[priorities.getChalkColorName(task.priority)];
   // 表示色の設定.
   const pickColor = (task) =>
-    task.completed ? chalk.gray : (priorityColor(task) ?? chalk.yellow);
+    task.completed ? chalk.gray : priorityColor(task);
 
   taskList
     .map((task) => pickColor(task)(formatTask(task)))

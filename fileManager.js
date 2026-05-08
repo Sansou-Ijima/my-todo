@@ -3,7 +3,7 @@ const fs = require("fs");
 // データ管理ファイル.
 const DATA_FILE = `${__dirname}/tasks.json`;
 // 優先度の種別一覧.
-const { PRIORITY_TYPES } = require("./priorityTypes.js");
+const priorities = require("./priorityTypes.js");
 
 /**
  * データを取得します.
@@ -65,7 +65,7 @@ function checkData(data) {
     if (typeof task.completed !== "boolean") return false;
     if (typeof task.priority !== "string") return false;
     // 優先度の種別チェック.
-    if (!PRIORITY_TYPES.includes(task.priority)) return false;
+    if (!priorities.LEVELS.includes(task.priority)) return false;
   }
   return true;
 }

@@ -9,7 +9,7 @@ const commands = require("./commands.js");
 // 表示処理.
 const output = require("./output.js");
 // 優先度の種別一覧.
-const { PRIORITY_TYPES } = require("./priorityTypes.js");
+const priorities = require("./priorityTypes.js");
 
 /**
  * 指定の値が優先度の種別一覧に含まれているかをチェックします.
@@ -17,7 +17,7 @@ const { PRIORITY_TYPES } = require("./priorityTypes.js");
  * @returns {string} 指定の値.
  */
 function checkPriority(value) {
-  if (!PRIORITY_TYPES.includes(value))
+  if (!priorities.LEVELS.includes(value))
     throw new commander.InvalidArgumentError(
       "priorityは high / medium / low の中から指定してください。",
     );
