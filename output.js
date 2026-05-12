@@ -1,11 +1,11 @@
 // ターミナル出力の色付け.
-const chalk = require("chalk");
+const chalk = require('chalk');
 // 優先度に応じた色名取得関数.
-const priorities = require("./priorityTypes.js");
+const priorities = require('./priorityTypes.js');
 
 // タスク表示内容のフォーマット.
 function formatTask(task) {
-  return `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? "完了" : "未完了"}, 優先度: ${task.priority}`;
+  return `ID: ${task.id}, タイトル: ${task.title}, 作成日時: ${task.createdAt}, 完了状態: ${task.completed ? '完了' : '未完了'}, 優先度: ${task.priority}`;
 }
 
 // 統計表示内容のフォーマット.
@@ -25,18 +25,15 @@ function formatCompleteMessage(actionMessage, task) {
  */
 function getEmptyTaskMessage(taskListResult) {
   // 登録されているタスクが存在しない場合.
-  if (taskListResult.totalCount === 0)
-    return "登録されているタスクはありません.";
+  if (taskListResult.totalCount === 0) return '登録されているタスクはありません.';
 
   // 登録されているタスクは存在するが、フィルター条件に該当するタスクが存在しない場合.
   const filterMessages = {
-    done: "完了済みのタスクはありません.",
-    todo: "未完了のタスクはありません.",
-    search: "検索条件に該当するタスクはありません.",
+    done: '完了済みのタスクはありません.',
+    todo: '未完了のタスクはありません.',
+    search: '検索条件に該当するタスクはありません.',
   };
-  return (
-    filterMessages[taskListResult.filterType] ?? "該当するタスクはありません."
-  );
+  return filterMessages[taskListResult.filterType] ?? '該当するタスクはありません.';
 }
 
 /**
@@ -51,11 +48,9 @@ function outputTask(taskListResult) {
   }
 
   // 優先度に応じたchalk関数.
-  const priorityColor = (task) =>
-    chalk[priorities.getChalkColorName(task.priority)];
+  const priorityColor = (task) => chalk[priorities.getChalkColorName(task.priority)];
   // 表示色の設定.
-  const pickColor = (task) =>
-    task.completed ? chalk.gray : priorityColor(task);
+  const pickColor = (task) => (task.completed ? chalk.gray : priorityColor(task));
 
   taskListResult.tasks
     .map((task) => pickColor(task)(formatTask(task)))
@@ -78,16 +73,14 @@ function outputStatus(status) {
 function outputCompleteMessage(task, action) {
   // action毎のメッセージ設定.
   const actionMessages = {
-    add: { message: "追加しました", color: chalk.green },
-    done: { message: "完了にしました", color: chalk.green },
-    delete: { message: "削除しました", color: chalk.yellow },
+    add: { message: '追加しました', color: chalk.green },
+    done: { message: '完了にしました', color: chalk.green },
+    delete: { message: '削除しました', color: chalk.yellow },
   };
 
   const messageSetting = actionMessages[action];
 
-  console.log(
-    messageSetting.color(formatCompleteMessage(messageSetting.message, task)),
-  );
+  console.log(messageSetting.color(formatCompleteMessage(messageSetting.message, task)));
 }
 
 module.exports = {

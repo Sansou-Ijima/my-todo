@@ -1,15 +1,15 @@
 // コマンドライン引数の解析.
-const commander = require("commander");
+const commander = require('commander');
 const program = new commander.Command();
 const Option = commander.Option;
 // ターミナル出力の色付け.
-const chalk = require("chalk");
+const chalk = require('chalk');
 // 各コマンドの処理.
-const commands = require("./commands.js");
+const commands = require('./commands.js');
 // 表示処理.
-const output = require("./output.js");
+const output = require('./output.js');
 // 優先度の種別一覧.
-const priorities = require("./priorityTypes.js");
+const priorities = require('./priorityTypes.js');
 
 /**
  * 指定の値が優先度の種別一覧に含まれているかをチェックします.
@@ -18,30 +18,26 @@ const priorities = require("./priorityTypes.js");
  */
 function checkPriority(value) {
   if (!priorities.LEVELS.includes(value))
-    throw new commander.InvalidArgumentError(
-      "priorityは high / medium / low の中から指定してください。",
-    );
+    throw new commander.InvalidArgumentError('priorityは high / medium / low の中から指定してください。');
   return value;
 }
 
 // add コマンド.
 program
-  .command("add")
-  .option("--priority <type>", "タスクの優先度", checkPriority, "medium")
-  .argument("<title>", "String argument")
+  .command('add')
+  .option('--priority <type>', 'タスクの優先度', checkPriority, 'medium')
+  .argument('<title>', 'String argument')
   .action((title, options) => {
     const task = commands.addTask(title, options.priority);
 
-    output.outputCompleteMessage(task, "add");
+    output.outputCompleteMessage(task, 'add');
   });
 
 // list コマンド.
 program
-  .command("list")
-  .addOption(new Option("--done", "完了タスクのみを表示する").conflicts("todo"))
-  .addOption(
-    new Option("--todo", "未完了タスクのみを表示する").conflicts("done"),
-  )
+  .command('list')
+  .addOption(new Option('--done', '完了タスクのみを表示する').conflicts('todo'))
+  .addOption(new Option('--todo', '未完了タスクのみを表示する').conflicts('done'))
   .action((options) => {
     const taskListResult = commands.getTaskList(options);
 
@@ -50,8 +46,8 @@ program
 
 // search コマンド.
 program
-  .command("search")
-  .argument("<text>", "String argument")
+  .command('search')
+  .argument('<text>', 'String argument')
   .action((text) => {
     const taskListResult = commands.searchTask(text);
 
@@ -59,7 +55,7 @@ program
   });
 
 // stats コマンド.
-program.command("stats").action(() => {
+program.command('stats').action(() => {
   const status = commands.getStats();
 
   output.outputStatus(status);
@@ -67,26 +63,26 @@ program.command("stats").action(() => {
 
 // done コマンド.
 program
-  .command("done")
-  .argument("<id>", "String argument")
+  .command('done')
+  .argument('<id>', 'String argument')
   .action((id) => {
     const target = commands.updateTask(id);
 
-    output.outputCompleteMessage(target, "done");
+    output.outputCompleteMessage(target, 'done');
   });
 
 // delete コマンド.
 program
-  .command("delete")
-  .argument("<id>", "String argument")
+  .command('delete')
+  .argument('<id>', 'String argument')
   .action((id) => {
     const target = commands.deleteTask(id);
 
-    output.outputCompleteMessage(target, "delete");
+    output.outputCompleteMessage(target, 'delete');
   });
 
 // デフォルトコマンド.
-program.command("print-help", { isDefault: true, hidden: true }).action(() => {
+program.command('print-help', { isDefault: true, hidden: true }).action(() => {
   program.outputHelp();
 });
 

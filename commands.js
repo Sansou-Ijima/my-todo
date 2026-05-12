@@ -1,9 +1,9 @@
 // 一意なIDの生成.
-const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4 } = require('uuid');
 // 日時のフォーマット.
-const dayjs = require("dayjs");
+const dayjs = require('dayjs');
 // tasks.jsonの読み書き.
-const fileManager = require("./fileManager.js");
+const fileManager = require('./fileManager.js');
 
 /**
  * 新規タスクを作成します.
@@ -16,7 +16,7 @@ function createTask(title, priority) {
     // ID: uuid で生成した一意のIDを付与.
     id: uuidv4(),
     // 作成日時: dayjs で YYYY-MM-DD HH:mm 形式にして保存する.
-    createdAt: dayjs().format("YYYY-MM-DD HH:mm"),
+    createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
     // タイトル: 引数で受け取ったタイトルを設定する.
     title: title,
     // 完了状態: デフォルトでfalse（未完了）を設定.
@@ -57,11 +57,9 @@ function createStatus(taskList) {
   // 未完了タスク数.
   const notCompleted = taskList.filter((task) => !task.completed).length;
   // 完了率（パーセンテージ）.
-  const completedRate =
-    total === 0 ? 0 : ((completed / total) * 100).toFixed(1);
+  const completedRate = total === 0 ? 0 : ((completed / total) * 100).toFixed(1);
   // 直近7日以内に作成されたタスクの件数（dayjs を使って判定する）.
-  const isWithin7Days = (task) =>
-    dayjs(task.createdAt).isAfter(dayjs().subtract(7, "day"));
+  const isWithin7Days = (task) => dayjs(task.createdAt).isAfter(dayjs().subtract(7, 'day'));
   const recent = taskList.filter((task) => isWithin7Days(task)).length;
 
   return { total, completed, notCompleted, completedRate, recent };
@@ -74,8 +72,7 @@ function createStatus(taskList) {
  * @returns {object} 追加したタスク.
  */
 function addTask(title, priority) {
-  if (!title || !title.match(/\S/g))
-    throw new Error("タイトルを入力してください.");
+  if (!title || !title.match(/\S/g)) throw new Error('タイトルを入力してください.');
 
   const taskList = fileManager.getData();
 
@@ -108,16 +105,12 @@ function getTaskList(options) {
 
   // フィルター種別.
   const getFilterType = (options) => {
-    if (options.done) return "done";
-    if (options.todo) return "todo";
-    return "all";
+    if (options.done) return 'done';
+    if (options.todo) return 'todo';
+    return 'all';
   };
 
-  return createTaskListResult(
-    taskList,
-    getFilterFunc(options),
-    getFilterType(options),
-  );
+  return createTaskListResult(taskList, getFilterFunc(options), getFilterType(options));
 }
 
 /**
@@ -126,15 +119,11 @@ function getTaskList(options) {
  * @returns {object} タスク一覧.
  */
 function searchTask(text) {
-  if (!text.trim()) throw new Error("テキストを入力してください.");
+  if (!text.trim()) throw new Error('テキストを入力してください.');
 
   const taskList = fileManager.getData();
 
-  return createTaskListResult(
-    taskList,
-    (task) => task.title.includes(text),
-    "search",
-  );
+  return createTaskListResult(taskList, (task) => task.title.includes(text), 'search');
 }
 
 /**
@@ -157,10 +146,9 @@ function updateTask(id) {
 
   const target = taskList.find((task) => task.id === id);
 
-  if (!target) throw new Error("指定のIDに該当するタスクが存在しません.");
+  if (!target) throw new Error('指定のIDに該当するタスクが存在しません.');
 
-  if (target.completed)
-    throw new Error("指定のタスクはすでに完了になっています.");
+  if (target.completed) throw new Error('指定のタスクはすでに完了になっています.');
 
   target.completed = true;
 
@@ -179,7 +167,7 @@ function deleteTask(id) {
 
   const index = taskList.findIndex((task) => task.id === id);
 
-  if (index < 0) throw new Error("指定のIDに該当するタスクが存在しません.");
+  if (index < 0) throw new Error('指定のIDに該当するタスクが存在しません.');
 
   const target = taskList.splice(index, 1).shift();
 
