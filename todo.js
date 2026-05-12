@@ -43,9 +43,9 @@ program
     new Option("--todo", "未完了タスクのみを表示する").conflicts("done"),
   )
   .action((options) => {
-    const taskList = commands.getTaskList(options);
+    const taskListResult = commands.getTaskList(options);
 
-    output.outputTask(taskList, "list");
+    output.outputTask(taskListResult);
   });
 
 // search コマンド.
@@ -53,9 +53,9 @@ program
   .command("search")
   .argument("<text>", "String argument")
   .action((text) => {
-    const taskList = commands.searchTask(text);
+    const taskListResult = commands.searchTask(text);
 
-    output.outputTask(taskList, "search");
+    output.outputTask(taskListResult);
   });
 
 // stats コマンド.

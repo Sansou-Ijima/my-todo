@@ -27,6 +27,24 @@ function createTask(title, priority) {
 }
 
 /**
+ * タスク一覧の取得結果を作成します.
+ * @param {object} taskList タスク一覧.
+ * @param {function} filterFunc フィルター関数.
+ * @param {string} filterType フィルター種別.
+ * @returns {object} タスク一覧の取得結果.
+ */
+function createTaskListResult(taskList, filterFunc, filterType) {
+  return {
+    // 絞り込み後のタスク一覧.
+    tasks: taskList.filter(filterFunc),
+    // 登録されているタスクの総数.
+    totalCount: taskList.length,
+    // フィルター種別.
+    filterType: filterType,
+  };
+}
+
+/**
  * タスク一覧から統計を作成します.
  * @param {object} taskList タスク一覧.
  * @returns {object} 統計.
@@ -76,6 +94,8 @@ function addTask(title, priority) {
  * @returns {object} タスク一覧.
  */
 function getTaskList(options) {
+  const taskList = fileManager.getData();
+
   // フィルター条件.
   const getFilterFunc = (options) => {
     // 完了タスクのみを表示する.
@@ -86,7 +106,18 @@ function getTaskList(options) {
     return () => true;
   };
 
-  return fileManager.getData().filter(getFilterFunc(options));
+  // フィルター種別.
+  const getFilterType = (options) => {
+    if (options.done) return "done";
+    if (options.todo) return "todo";
+    return "all";
+  };
+
+  return createTaskListResult(
+    taskList,
+    getFilterFunc(options),
+    getFilterType(options),
+  );
 }
 
 /**
@@ -97,7 +128,13 @@ function getTaskList(options) {
 function searchTask(text) {
   if (!text.trim()) throw new Error("テキストを入力してください.");
 
-  return fileManager.getData().filter((task) => task.title.includes(text));
+  const taskList = fileManager.getData();
+
+  return createTaskListResult(
+    taskList,
+    (task) => task.title.includes(text),
+    "search",
+  );
 }
 
 /**

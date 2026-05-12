@@ -19,28 +19,45 @@ function formatCompleteMessage(actionMessage, task) {
 }
 
 /**
- * タスク一覧を表示します.
- * @param {object} taskList タスク一覧.
- * @param {string} action アクション.
+ * 表示するタスクが存在しない場合の表示メッセージを返します.
+ * @param {object} taskListResult タスク一覧の取得結果.
+ * @returns {string} 表示するタスクが存在しない場合の表示メッセージ.
  */
-function outputTask(taskList, action) {
-  if (taskList.length === 0) {
-    // action毎のメッセージ設定.
-    const actionMessages = {
-      list: "登録されているタスクはありません.",
-      search: "検索条件に該当するタスクはありません.",
-    };
-    console.log(actionMessages[action] ?? "該当するタスクはありません.");
+function getEmptyTaskMessage(taskListResult) {
+  // 登録されているタスクが存在しない場合.
+  if (taskListResult.totalCount === 0)
+    return "登録されているタスクはありません.";
+
+  // 登録されているタスクは存在するが、フィルター条件に該当するタスクが存在しない場合.
+  const filterMessages = {
+    done: "完了済みのタスクはありません.",
+    todo: "未完了のタスクはありません.",
+    search: "検索条件に該当するタスクはありません.",
+  };
+  return (
+    filterMessages[taskListResult.filterType] ?? "該当するタスクはありません."
+  );
+}
+
+/**
+ * タスク一覧を表示します.
+ * @param {object} taskListResult タスク一覧.
+ */
+function outputTask(taskListResult) {
+  // 表示するタスクが 0件 の場合.
+  if (taskListResult.tasks.length === 0) {
+    console.log(getEmptyTaskMessage(taskListResult));
     return;
   }
 
   // 優先度に応じたchalk関数.
-  const priorityColor = (task) => chalk[priorities.getChalkColorName(task.priority)];
+  const priorityColor = (task) =>
+    chalk[priorities.getChalkColorName(task.priority)];
   // 表示色の設定.
   const pickColor = (task) =>
     task.completed ? chalk.gray : priorityColor(task);
 
-  taskList
+  taskListResult.tasks
     .map((task) => pickColor(task)(formatTask(task)))
     .forEach((formattedTask) => console.log(formattedTask));
 }
