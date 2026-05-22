@@ -1,8 +1,23 @@
+/**
+ * 対象のオブジェクトを再起的にフリーズします.
+ * @param {object} target 対象オブジェクト.
+ * @returns {object} フリーズしたオブジェクト.
+ */
+function deepFreeze(target) {
+  Object.values(target).forEach((value) => {
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  });
+
+  return Object.freeze(target);
+}
+
 // 優先度は high / medium / low の3段階.
-const PRIORITY_CONFIGS = Object.freeze({
-  high: Object.freeze({ color: 'red' }),
-  medium: Object.freeze({ color: 'yellow' }),
-  low: Object.freeze({ color: 'white' }),
+const PRIORITY_CONFIGS = deepFreeze({
+  high: { color: 'red' },
+  medium: { color: 'yellow' },
+  low: { color: 'white' },
 });
 
 // 優先度の種別一覧. ※キーが二重定義にならないよう、PRIORITY_CONFIGSから取得.
