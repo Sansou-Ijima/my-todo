@@ -2,6 +2,8 @@
 const chalk = require('chalk');
 // 優先度に応じた色名取得関数.
 const priorities = require('./priorityTypes.js');
+// フィルター種別一覧.
+const filterTypes = require('./filterTypes.js');
 
 // タスク表示内容のフォーマット.
 function formatTask(task) {
@@ -19,31 +21,13 @@ function formatCompleteMessage(actionMessage, task) {
 }
 
 /**
- * 表示するタスクが存在しない場合の表示メッセージを返します.
- * @param {object} taskListResult タスク一覧の取得結果.
- * @returns {string} 表示するタスクが存在しない場合の表示メッセージ.
- */
-function getEmptyTaskMessage(taskListResult) {
-  // 登録されているタスクが存在しない場合.
-  if (taskListResult.totalCount === 0) return '登録されているタスクはありません.';
-
-  // 登録されているタスクは存在するが、フィルター条件に該当するタスクが存在しない場合.
-  const filterMessages = {
-    done: '完了済みのタスクはありません.',
-    todo: '未完了のタスクはありません.',
-    search: '検索条件に該当するタスクはありません.',
-  };
-  return filterMessages[taskListResult.filterType] ?? '該当するタスクはありません.';
-}
-
-/**
  * タスク一覧を表示します.
  * @param {object} taskListResult タスク一覧.
  */
 function outputTask(taskListResult) {
   // 表示するタスクが 0件 の場合.
   if (taskListResult.tasks.length === 0) {
-    console.log(getEmptyTaskMessage(taskListResult));
+    console.log(filterTypes.getEmptyMessage(taskListResult));
     return;
   }
 

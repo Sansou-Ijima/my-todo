@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const dayjs = require('dayjs');
 // tasks.jsonの読み書き.
 const fileManager = require('./fileManager.js');
+// フィルター種別一覧.
+const filterTypes = require('./filterTypes.js');
 
 /**
  * 新規タスクを作成します.
@@ -34,6 +36,8 @@ function createTask(title, priority) {
  * @returns {object} タスク一覧の取得結果.
  */
 function createTaskListResult(taskList, filterFunc, filterType) {
+  if (!filterTypes.TYPES.includes(filterType)) throw new Error('不正なフィルター種別です.');
+
   return {
     // 絞り込み後のタスク一覧.
     tasks: taskList.filter(filterFunc),
