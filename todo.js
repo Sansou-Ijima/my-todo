@@ -10,6 +10,8 @@ const commands = require('./commands.js');
 const output = require('./output.js');
 // 優先度の種別一覧.
 const priorities = require('./priorityTypes.js');
+// データベース.
+const database = require('./database.js');
 
 /**
  * 指定の値が優先度の種別一覧に含まれているかをチェックします.
@@ -92,6 +94,9 @@ program.exitOverride();
 // async関数の中でawaitを呼び出す.
 (async () => {
   try {
+    // テーブルが存在しない場合は作成する.
+    await database.initializeDatabase();
+
     // process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
     await program.parseAsync(process.argv);
   } catch (err) {
