@@ -30,6 +30,62 @@ function initializeDatabase() {
   return executeQuery('run', query, []);
 }
 
+/**
+ * 新規タスクを追加します.
+ * @param {object} task タスク.
+ * @returns {Promise} 結果.
+ */
+function addTask(task) {
+  const query = 'insert into tasks(id, title, done, priority, created_at) values(?,?,?,?,?)';
+  return executeQuery('run', query, [task.id, task.title, task.completed ? 1 : 0, task.priority, task.createdAt]);
+}
+
+/**
+ * タスクの総数を取得します.
+ * @returns {Promise<number>} タスクの総数.
+ */
+async function getTotalCount() {
+  const query = 'select count(*) AS count from tasks';
+  const result = await executeQuery('get', query, []);
+  return result.count;
+}
+
+/**
+ * タスク一覧を取得します.
+ * @param {object} options オプション.
+ * @returns {Promise<object[]>} タスク一覧.
+ */
+async function getTaskList(options) {
+  const query = 'select * from tasks';
+
+  const getFilteredQuery = (options) => {
+    if (options.done) return query + ' where done = 1';
+    if (options.todo) return query + ' where done = 0';
+    return query;
+  };
+
+  const rows = await executeQuery('all', getFilteredQuery(options), []);
+  return rows.map(convertRowToTask);
+}
+
+/**
+ * データベースのレコードをタスクオブジェクトに変換します.
+ * @param {object} row データベースのレコード.
+ * @returns {object} タスクオブジェクト.
+ */
+function convertRowToTask(row) {
+  return {
+    id: row.id,
+    title: row.title,
+    completed: row.done === 1,
+    priority: row.priority,
+    createdAt: row.created_at,
+  };
+}
+
 module.exports = {
   initializeDatabase,
+  addTask,
+  getTotalCount,
+  getTaskList,
 };

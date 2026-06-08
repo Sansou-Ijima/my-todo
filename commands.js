@@ -2,8 +2,8 @@
 const { v4: uuidv4 } = require('uuid');
 // 日時のフォーマット.
 const dayjs = require('dayjs');
-// tasks.jsonの読み書き.
-const fileManager = require('./fileManager.js');
+// データベース.
+const database = require('./database.js');
 // フィルター種別一覧.
 const filterTypes = require('./filterTypes.js');
 
@@ -30,19 +30,18 @@ function createTask(title, priority) {
 
 /**
  * タスク一覧の取得結果を作成します.
- * @param {object} taskList タスク一覧.
- * @param {function} filterFunc フィルター関数.
+ * @param {object} taskList 絞り込み後のタスク一覧.
  * @param {string} filterType フィルター種別.
  * @returns {object} タスク一覧の取得結果.
  */
-function createTaskListResult(taskList, filterFunc, filterType) {
+async function createTaskListResult(taskList, filterType) {
   if (!filterTypes.TYPES.includes(filterType)) throw new Error('不正なフィルター種別です.');
 
   return {
     // 絞り込み後のタスク一覧.
-    tasks: taskList.filter(filterFunc),
+    tasks: taskList,
     // 登録されているタスクの総数.
-    totalCount: taskList.length,
+    totalCount: await database.getTotalCount(),
     // フィルター種別.
     filterType: filterType,
   };
@@ -75,16 +74,12 @@ function createStatus(taskList) {
  * @param {string} priority タスクの優先度.
  * @returns {object} 追加したタスク.
  */
-function addTask(title, priority) {
+async function addTask(title, priority) {
   if (!title || !title.match(/\S/g)) throw new Error('タイトルを入力してください.');
-
-  const taskList = fileManager.getData();
 
   const task = createTask(title, priority);
 
-  taskList.push(task);
-
-  fileManager.saveData(taskList);
+  await database.addTask(task);
 
   return task;
 }
@@ -94,18 +89,8 @@ function addTask(title, priority) {
  * @param {object} options オプション.
  * @returns {object} タスク一覧.
  */
-function getTaskList(options) {
-  const taskList = fileManager.getData();
-
-  // フィルター条件.
-  const getFilterFunc = (options) => {
-    // 完了タスクのみを表示する.
-    if (options.done) return (task) => task.completed;
-    // 未完了タスクのみを表示する.
-    if (options.todo) return (task) => !task.completed;
-    // 全件表示する.
-    return () => true;
-  };
+async function getTaskList(options) {
+  const taskList = await database.getTaskList(options);
 
   // フィルター種別.
   const getFilterType = (options) => {
@@ -114,7 +99,7 @@ function getTaskList(options) {
     return 'all';
   };
 
-  return createTaskListResult(taskList, getFilterFunc(options), getFilterType(options));
+  return createTaskListResult(taskList, getFilterType(options));
 }
 
 /**

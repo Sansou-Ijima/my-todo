@@ -29,8 +29,8 @@ program
   .command('add')
   .option('--priority <type>', 'タスクの優先度', checkPriority, 'medium')
   .argument('<title>', 'String argument')
-  .action((title, options) => {
-    const task = commands.addTask(title, options.priority);
+  .action(async (title, options) => {
+    const task = await commands.addTask(title, options.priority);
 
     output.outputCompleteMessage(task, 'add');
   });
@@ -40,8 +40,8 @@ program
   .command('list')
   .addOption(new Option('--done', '完了タスクのみを表示する').conflicts('todo'))
   .addOption(new Option('--todo', '未完了タスクのみを表示する').conflicts('done'))
-  .action((options) => {
-    const taskListResult = commands.getTaskList(options);
+  .action(async (options) => {
+    const taskListResult = await commands.getTaskList(options);
 
     output.outputTask(taskListResult);
   });
