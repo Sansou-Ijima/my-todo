@@ -48,27 +48,6 @@ async function createTaskListResult(taskList, filterType) {
 }
 
 /**
- * タスク一覧から統計を作成します.
- * @param {object} taskList タスク一覧.
- * @returns {object} 統計.
- */
-function createStatus(taskList) {
-  // 全タスク数.
-  const total = taskList.length;
-  // 完了タスク数.
-  const completed = taskList.filter((task) => task.completed).length;
-  // 未完了タスク数.
-  const notCompleted = taskList.filter((task) => !task.completed).length;
-  // 完了率（パーセンテージ）.
-  const completedRate = total === 0 ? 0 : ((completed / total) * 100).toFixed(1);
-  // 直近7日以内に作成されたタスクの件数（dayjs を使って判定する）.
-  const isWithin7Days = (task) => dayjs(task.createdAt).isAfter(dayjs().subtract(7, 'day'));
-  const recent = taskList.filter((task) => isWithin7Days(task)).length;
-
-  return { total, completed, notCompleted, completedRate, recent };
-}
-
-/**
  * 新規タスクを作成し、データを保存します.
  * @param {string} title タスクのタイトル.
  * @param {string} priority タスクの優先度.
@@ -107,22 +86,27 @@ async function getTaskList(options) {
  * @param {string} text 検索テキスト.
  * @returns {object} タスク一覧.
  */
-function searchTask(text) {
+async function searchTask(text) {
   if (!text.trim()) throw new Error('テキストを入力してください.');
 
-  const taskList = fileManager.getData();
+  const taskList = await database.searchTask(text);
 
-  return createTaskListResult(taskList, (task) => task.title.includes(text), 'search');
+  return createTaskListResult(taskList, 'search');
 }
 
 /**
  * 統計を返します.
  * @returns {object} 統計.
  */
-function getStats() {
-  const taskList = fileManager.getData();
-
-  return createStatus(taskList);
+async function getStats() {
+  const stats = await database.getStats();
+  return {
+    total: stats.total,
+    completed: stats.completed,
+    notCompleted: stats.notCompleted,
+    completedRate: stats.total === 0 ? 0 : ((stats.completed / stats.total) * 100).toFixed(1),
+    recent: stats.recent,
+  };
 }
 
 /**

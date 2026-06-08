@@ -69,6 +69,27 @@ async function getTaskList(options) {
 }
 
 /**
+ * タスクを検索します.
+ * @param {string} text 検索文字列.
+ * @returns {Promise<object[]>} 検索結果.
+ */
+async function searchTask(text) {
+  const query = 'select * from tasks where title like ?';
+  const result = await executeQuery('all', query, [`%${text}%`]);
+  return result.map(convertRowToTask);
+}
+
+/**
+ * 統計を取得します.
+ * @returns {Promise<object>} 統計.
+ */
+function getStats() {
+  const query =
+    "select count(*) AS total, count(CASE WHEN done = 1 THEN 1 END) AS completed, count(CASE WHEN done = 0 THEN 1 END) AS notCompleted, count(CASE WHEN datetime(created_at) > datetime('now', '-7 days') THEN 1 END) AS recent from tasks";
+  return executeQuery('get', query, []);
+}
+
+/**
  * タスクを取得します.
  * @param {string} id タスクID.
  * @returns {Promise<object>} タスク.
@@ -119,6 +140,8 @@ module.exports = {
   addTask,
   getTotalCount,
   getTaskList,
+  searchTask,
+  getStats,
   getTaskById,
   updateTask,
   deleteTask,

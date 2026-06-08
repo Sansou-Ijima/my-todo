@@ -50,15 +50,15 @@ program
 program
   .command('search')
   .argument('<text>', 'String argument')
-  .action((text) => {
-    const taskListResult = commands.searchTask(text);
+  .action(async (text) => {
+    const taskListResult = await commands.searchTask(text);
 
     output.outputTask(taskListResult);
   });
 
 // stats コマンド.
-program.command('stats').action(() => {
-  const status = commands.getStats();
+program.command('stats').action(async () => {
+  const status = await commands.getStats();
 
   output.outputStatus(status);
 });
