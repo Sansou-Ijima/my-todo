@@ -69,6 +69,37 @@ async function getTaskList(options) {
 }
 
 /**
+ * タスクを取得します.
+ * @param {string} id タスクID.
+ * @returns {Promise<object>} タスク.
+ */
+async function getTaskById(id) {
+  const query = 'select * from tasks where id = ?';
+  const result = await executeQuery('get', query, [id]);
+  return result ? convertRowToTask(result) : null;
+}
+
+/**
+ * タスクを完了状態に更新します.
+ * @param {string} id タスクID.
+ * @returns {Promise} 結果.
+ */
+function updateTask(id) {
+  const query = 'update tasks set done = 1 where id = ?';
+  return executeQuery('run', query, [id]);
+}
+
+/**
+ * タスクを削除します.
+ * @param {string} id タスクID.
+ * @returns {Promise} 結果.
+ */
+function deleteTask(id) {
+  const query = 'delete from tasks where id = ?';
+  return executeQuery('run', query, [id]);
+}
+
+/**
  * データベースのレコードをタスクオブジェクトに変換します.
  * @param {object} row データベースのレコード.
  * @returns {object} タスクオブジェクト.
@@ -88,4 +119,7 @@ module.exports = {
   addTask,
   getTotalCount,
   getTaskList,
+  getTaskById,
+  updateTask,
+  deleteTask,
 };

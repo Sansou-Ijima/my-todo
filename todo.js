@@ -67,8 +67,8 @@ program.command('stats').action(() => {
 program
   .command('done')
   .argument('<id>', 'String argument')
-  .action((id) => {
-    const target = commands.updateTask(id);
+  .action(async (id) => {
+    const target = await commands.updateTask(id);
 
     output.outputCompleteMessage(target, 'done');
   });
@@ -77,8 +77,8 @@ program
 program
   .command('delete')
   .argument('<id>', 'String argument')
-  .action((id) => {
-    const target = commands.deleteTask(id);
+  .action(async (id) => {
+    const target = await commands.deleteTask(id);
 
     output.outputCompleteMessage(target, 'delete');
   });

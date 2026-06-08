@@ -130,18 +130,16 @@ function getStats() {
  * @param {string} id タスクのID.
  * @returns {object} 更新したタスク.
  */
-function updateTask(id) {
-  const taskList = fileManager.getData();
-
-  const target = taskList.find((task) => task.id === id);
+async function updateTask(id) {
+  const target = await database.getTaskById(id);
 
   if (!target) throw new Error('指定のIDに該当するタスクが存在しません.');
 
   if (target.completed) throw new Error('指定のタスクはすでに完了になっています.');
 
-  target.completed = true;
+  await database.updateTask(id);
 
-  fileManager.saveData(taskList);
+  target.completed = true;
 
   return target;
 }
@@ -151,16 +149,12 @@ function updateTask(id) {
  * @param {string} id タスクのID.
  * @returns {object} 削除したタスク.
  */
-function deleteTask(id) {
-  const taskList = fileManager.getData();
+async function deleteTask(id) {
+  const target = await database.getTaskById(id);
 
-  const index = taskList.findIndex((task) => task.id === id);
+  if (!target) throw new Error('指定のIDに該当するタスクが存在しません.');
 
-  if (index < 0) throw new Error('指定のIDに該当するタスクが存在しません.');
-
-  const target = taskList.splice(index, 1).shift();
-
-  fileManager.saveData(taskList);
+  await database.deleteTask(id);
 
   return target;
 }
