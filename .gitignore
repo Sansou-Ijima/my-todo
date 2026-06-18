@@ -1,2 +1,3 @@
+# 設定追加時、 'git diff' で「No newline at end of file」が出ていないか確認.
 node_modules/
 todos.db
