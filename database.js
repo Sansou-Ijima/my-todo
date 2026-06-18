@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./todos.db');
+const db = new sqlite3.Database(`${__dirname}/todos.db`);
 
 /**
  * クエリを実行します.
