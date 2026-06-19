@@ -2,17 +2,24 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(`${__dirname}/todos.db`);
 
 /**
- * クエリを実行します.
+ * DB操作をPromiseとして実行します.
  * @param {string} operation 操作.
  * @param {string} query クエリ.
  * @param {array} params パラメータ.
- * @returns {Promise} 結果.
+ * @returns {Promise} 操作毎の結果.
+ * ※run：{lastID: number, changes: number}
+ * ※get：object|undefined
+ * ※all：object[]
  */
-function executeQuery(operation, query, params) {
+function accessDatabase(operation, query, params) {
   return new Promise((resolve, reject) => {
-    db[operation](query, params, (err, result) => {
+    db[operation](query, params, function (err, result) {
       if (err) {
         reject(err);
+        return;
+      }
+      if (operation === 'run') {
+        resolve({ lastID: this.lastID, changes: this.changes });
         return;
       }
       resolve(result);
@@ -21,23 +28,55 @@ function executeQuery(operation, query, params) {
 }
 
 /**
+ * クエリを実行します.
+ * @param {string} query クエリ.
+ * @param {array} params パラメータ.
+ * @returns {Promise<{lastID: number, changes: number}>} 実行結果.
+ * ※lastID：自動採番ID.
+ * ※changes：更新・削除された行数.
+ */
+function execute(query, params) {
+  return accessDatabase('run', query, params);
+}
+
+/**
+ * データを1件取得します.
+ * @param {string} query クエリ.
+ * @param {array} params パラメータ.
+ * @returns {Promise<object|undefined>} 取得結果.
+ */
+function findOne(query, params) {
+  return accessDatabase('get', query, params);
+}
+
+/**
+ * データを複数件取得します.
+ * @param {string} query クエリ.
+ * @param {array} params パラメータ.
+ * @returns {Promise<object[]>} 取得結果.
+ */
+function findAll(query, params) {
+  return accessDatabase('all', query, params);
+}
+
+/**
  * データベースを初期化します.
- * @returns {Promise} 結果.
+ * @returns {Promise<{lastID: number, changes: number}>} 実行結果.
  */
 function initializeDatabase() {
   const query =
     'create table if not exists tasks (id TEXT PRIMARY KEY, title TEXT NOT NULL, done INTEGER NOT NULL, priority TEXT NOT NULL, created_at TEXT NOT NULL)';
-  return executeQuery('run', query, []);
+  return execute(query, []);
 }
 
 /**
  * 新規タスクを追加します.
  * @param {object} task タスク.
- * @returns {Promise} 結果.
+ * @returns {Promise<{lastID: number, changes: number}>} 実行結果.
  */
 function addTask(task) {
   const query = 'insert into tasks(id, title, done, priority, created_at) values(?,?,?,?,?)';
-  return executeQuery('run', query, [task.id, task.title, task.completed ? 1 : 0, task.priority, task.createdAt]);
+  return execute(query, [task.id, task.title, task.completed ? 1 : 0, task.priority, task.createdAt]);
 }
 
 /**
@@ -46,8 +85,8 @@ function addTask(task) {
  */
 async function getTotalCount() {
   const query = 'select count(*) AS count from tasks';
-  const result = await executeQuery('get', query, []);
-  return result.count;
+  const row = await findOne(query, []);
+  return row.count;
 }
 
 /**
@@ -64,7 +103,7 @@ async function getTaskList(options) {
     return query;
   };
 
-  const rows = await executeQuery('all', getFilteredQuery(options), []);
+  const rows = await findAll(getFilteredQuery(options), []);
   return rows.map(convertRowToTask);
 }
 
@@ -75,8 +114,8 @@ async function getTaskList(options) {
  */
 async function searchTask(text) {
   const query = 'select * from tasks where title like ?';
-  const result = await executeQuery('all', query, [`%${text}%`]);
-  return result.map(convertRowToTask);
+  const rows = await findAll(query, [`%${text}%`]);
+  return rows.map(convertRowToTask);
 }
 
 /**
@@ -86,7 +125,7 @@ async function searchTask(text) {
 function getStats() {
   const query =
     "select count(*) AS total, count(CASE WHEN done = 1 THEN 1 END) AS completed, count(CASE WHEN done = 0 THEN 1 END) AS notCompleted, count(CASE WHEN datetime(created_at) > datetime('now', '-7 days') THEN 1 END) AS recent from tasks";
-  return executeQuery('get', query, []);
+  return findOne(query, []);
 }
 
 /**
@@ -96,28 +135,28 @@ function getStats() {
  */
 async function getTaskById(id) {
   const query = 'select * from tasks where id = ?';
-  const result = await executeQuery('get', query, [id]);
-  return result ? convertRowToTask(result) : null;
+  const row = await findOne(query, [id]);
+  return row ? convertRowToTask(row) : null;
 }
 
 /**
  * タスクを完了状態に更新します.
  * @param {string} id タスクID.
- * @returns {Promise} 結果.
+ * @returns {Promise<{lastID: number, changes: number}>} 実行結果.
  */
 function updateTask(id) {
   const query = 'update tasks set done = 1 where id = ?';
-  return executeQuery('run', query, [id]);
+  return execute(query, [id]);
 }
 
 /**
  * タスクを削除します.
  * @param {string} id タスクID.
- * @returns {Promise} 結果.
+ * @returns {Promise<{lastID: number, changes: number}>} 実行結果.
  */
 function deleteTask(id) {
   const query = 'delete from tasks where id = ?';
-  return executeQuery('run', query, [id]);
+  return execute(query, [id]);
 }
 
 /**
