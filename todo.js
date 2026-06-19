@@ -24,7 +24,6 @@ function checkPriority(value) {
   return value;
 }
 
-// add コマンド.
 program
   .command('add')
   .option('--priority <type>', 'タスクの優先度', checkPriority, 'medium')
@@ -35,7 +34,6 @@ program
     output.outputCompleteMessage(task, 'add');
   });
 
-// list コマンド.
 program
   .command('list')
   .addOption(new Option('--done', '完了タスクのみを表示する').conflicts('todo'))
@@ -46,7 +44,6 @@ program
     output.outputTask(taskListResult);
   });
 
-// search コマンド.
 program
   .command('search')
   .argument('<text>', 'String argument')
@@ -56,14 +53,12 @@ program
     output.outputTask(taskListResult);
   });
 
-// stats コマンド.
 program.command('stats').action(async () => {
   const status = await commands.getStats();
 
   output.outputStatus(status);
 });
 
-// done コマンド.
 program
   .command('done')
   .argument('<id>', 'String argument')
@@ -73,7 +68,6 @@ program
     output.outputCompleteMessage(target, 'done');
   });
 
-// delete コマンド.
 program
   .command('delete')
   .argument('<id>', 'String argument')
@@ -83,7 +77,6 @@ program
     output.outputCompleteMessage(target, 'delete');
   });
 
-// デフォルトコマンド.
 program.command('print-help', { isDefault: true, hidden: true }).action(() => {
   program.outputHelp();
 });
@@ -91,7 +84,6 @@ program.command('print-help', { isDefault: true, hidden: true }).action(() => {
 // エラー検出時にprocess.exit()ではなく、CommanderErrorをthrowする.
 program.exitOverride();
 
-// async関数の中でawaitを呼び出す.
 (async () => {
   try {
     // テーブルが存在しない場合は作成する.
@@ -100,9 +92,7 @@ program.exitOverride();
     // process.argv を解析し、Electron および特別な Node.js フラグを自動検出.
     await program.parseAsync(process.argv);
   } catch (err) {
-    // エラーメッセージを chalk の赤色で表示する.
     console.error(chalk.red(err.message));
-    // 終了コードに 1 を設定する.
     process.exitCode = 1;
   }
 })();

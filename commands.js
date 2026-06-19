@@ -15,15 +15,10 @@ const filterTypes = require('./filterTypes.js');
  */
 function createTask(title, priority) {
   return {
-    // ID: uuid で生成した一意のIDを付与.
     id: uuidv4(),
-    // 作成日時: dayjs で YYYY-MM-DD HH:mm 形式にして保存する.
     createdAt: dayjs().format('YYYY-MM-DD HH:mm'),
-    // タイトル: 引数で受け取ったタイトルを設定する.
     title: title,
-    // 完了状態: デフォルトでfalse（未完了）を設定.
     completed: false,
-    // 優先度: 引数で受け取った優先度を設定する.
     priority: priority,
   };
 }
@@ -38,11 +33,8 @@ async function createTaskListResult(taskList, filterType) {
   if (!filterTypes.TYPES.includes(filterType)) throw new Error('不正なフィルター種別です.');
 
   return {
-    // 絞り込み後のタスク一覧.
     tasks: taskList,
-    // 登録されているタスクの総数.
     totalCount: await database.getTotalCount(),
-    // フィルター種別.
     filterType: filterType,
   };
 }
@@ -71,7 +63,6 @@ async function addTask(title, priority) {
 async function getTaskList(options) {
   const taskList = await database.getTaskList(options);
 
-  // フィルター種別.
   const getFilterType = (options) => {
     if (options.done) return 'done';
     if (options.todo) return 'todo';

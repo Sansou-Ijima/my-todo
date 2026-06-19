@@ -25,15 +25,12 @@ function formatCompleteMessage(actionMessage, task) {
  * @param {object} taskListResult タスク一覧.
  */
 function outputTask(taskListResult) {
-  // 表示するタスクが 0件 の場合.
   if (taskListResult.tasks.length === 0) {
     console.log(filterTypes.getEmptyMessage(taskListResult));
     return;
   }
 
-  // 優先度に応じたchalk関数.
   const priorityColor = (task) => chalk[priorities.getChalkColorName(task.priority)];
-  // 表示色の設定.
   const pickColor = (task) => (task.completed ? chalk.gray : priorityColor(task));
 
   taskListResult.tasks
@@ -55,7 +52,6 @@ function outputStatus(status) {
  * @param {string} action アクション.
  */
 function outputCompleteMessage(task, action) {
-  // action毎のメッセージ設定.
   const actionMessages = {
     add: { message: '追加しました', color: chalk.green },
     done: { message: '完了にしました', color: chalk.green },
