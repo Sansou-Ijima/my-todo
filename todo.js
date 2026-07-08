@@ -1,16 +1,10 @@
-// コマンドライン引数の解析.
 const commander = require('commander');
 const program = new commander.Command();
 const Option = commander.Option;
-// ターミナル出力の色付け.
 const chalk = require('chalk');
-// 各コマンドの処理.
 const commands = require('./commands.js');
-// 表示処理.
 const output = require('./output.js');
-// 優先度の種別一覧.
 const priorities = require('./priorityTypes.js');
-// データベース.
 const database = require('./database.js');
 
 /**

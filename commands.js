@@ -1,10 +1,6 @@
-// 一意なIDの生成.
 const { v4: uuidv4 } = require('uuid');
-// 日時のフォーマット.
 const dayjs = require('dayjs');
-// データベース.
 const database = require('./database.js');
-// フィルター種別一覧.
 const filterTypes = require('./filterTypes.js');
 
 /**

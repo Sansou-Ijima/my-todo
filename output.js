@@ -1,8 +1,5 @@
-// ターミナル出力の色付け.
 const chalk = require('chalk');
-// 優先度に応じた色名取得関数.
 const priorities = require('./priorityTypes.js');
-// フィルター種別一覧.
 const filterTypes = require('./filterTypes.js');
 
 // タスク表示内容のフォーマット.
