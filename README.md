@@ -151,3 +151,9 @@ node todo.js stats
 | _dayjs_     | 日時のフォーマット                           |
 | _uuid_      | 一意なIDの生成                               |
 | _sqlite3_   | データ管理                                   |
+
+## 開発時の注意点
+
+### 設定ファイルは1行1エントリとして扱える状態にしておく
+
+`git diff` で `No newline at end of file` が出ていないか確認.
