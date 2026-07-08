@@ -2,32 +2,6 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(`${__dirname}/todos.db`);
 
 /**
- * DB操作をPromiseとして実行します.
- * @param {string} operation 操作.
- * @param {string} query クエリ.
- * @param {array} params パラメータ.
- * @returns {Promise} 操作毎の結果.
- * ※run：{lastID: number, changes: number}
- * ※get：object|undefined
- * ※all：object[]
- */
-function accessDatabase(operation, query, params) {
-  return new Promise((resolve, reject) => {
-    db[operation](query, params, function (err, result) {
-      if (err) {
-        reject(err);
-        return;
-      }
-      if (operation === 'run') {
-        resolve({ lastID: this.lastID, changes: this.changes });
-        return;
-      }
-      resolve(result);
-    });
-  });
-}
-
-/**
  * クエリを実行します.
  * @param {string} query クエリ.
  * @param {array} params パラメータ.
@@ -36,7 +10,15 @@ function accessDatabase(operation, query, params) {
  * ※changes：更新・削除された行数.
  */
 function execute(query, params) {
-  return accessDatabase('run', query, params);
+  return new Promise((resolve, reject) => {
+    db.run(query, params, function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
 }
 
 /**
@@ -46,7 +28,15 @@ function execute(query, params) {
  * @returns {Promise<object|undefined>} 取得結果.
  */
 function findOne(query, params) {
-  return accessDatabase('get', query, params);
+  return new Promise((resolve, reject) => {
+    db.get(query, params, function (err, row) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(row);
+    });
+  });
 }
 
 /**
@@ -56,7 +46,15 @@ function findOne(query, params) {
  * @returns {Promise<object[]>} 取得結果.
  */
 function findAll(query, params) {
-  return accessDatabase('all', query, params);
+  return new Promise((resolve, reject) => {
+    db.all(query, params, function (err, rows) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(rows);
+    });
+  });
 }
 
 /**
